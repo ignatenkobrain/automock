@@ -1,5 +1,12 @@
 #!/bin/bash
 HOMEDIR="/home/`whoami`"
+function buildsrc
+{
+  #Build RPMs for x86_64
+  mock -r fedora-$FEDVER-x86_64 --rebuild --resultdir=$HOMEDIR/repo/"%(dist)s"/"%(target_arch)s"/os/ $1
+  #Build RPMs for i386
+  mock -r fedora-$FEDVER-i386 --rebuild --resultdir=$HOMEDIR/repo/"%(dist)s"/"%(target_arch)s"/os/ $1
+}
 if [[ $1 = "clean" ]]; then
   rm -rf $HOMEDIR/repo/
   mkdir $HOMEDIR/repo/ $HOMEDIR/repo/lastlogs/ $HOMEDIR/repo/lastlogs/source/ $HOMEDIR/repo/lastlogs/x86_64/ $HOMEDIR/repo/lastlogs/i386/
@@ -14,18 +21,18 @@ if [[ $1 = "clean" ]]; then
       createrepo $HOMEDIR/repo/fc$ver/i386/debug/
     done
   exit
-elif [[ $1 = *.spec && $2 = 1[89] ]]; then
-  SPECFILE=`readlink -f $1`
-  PACKAGENAME=`echo $SPECFILE | sed -e 's/^.*SPECS\///' -e 's/\.spec//'`
-  PACKAGEDIR=`echo $SPECFILE | sed -e 's/\/*.spec//'`
-  #FEDVER=`echo $SPECFILE | sed -e 's/^.*\(fc1[8-9]\).*$/\1/' -e 's/fc//'`
+elif [[ $2 = 1[89] ]]; then
+  FILE=`readlink -f $1`
+  #FEDVER=`echo $FILE | sed -e 's/^.*\(fc1[8-9]\).*$/\1/' -e 's/fc//'`
   FEDVER="$2"
-  #Build SRPM
-  mock --buildsrpm --resultdir=$HOMEDIR/repo/"%(dist)s"/source/ --spec $SPECFILE --source $PACKAGEDIR/SOURCES/
-  #Build RPMs for x86_64
-  mock -r fedora-$FEDVER-x86_64 --rebuild --resultdir=$HOMEDIR/repo/"%(dist)s"/"%(target_arch)s"/os/
-  #Build RPMs for i386
-  mock -r fedora-$FEDVER-i386 --rebuild --resultdir=$HOMEDIR/repo/"%(dist)s"/"%(target_arch)s"/os/
+  if [[ $1 = *.spec ]]; then
+    PACKAGENAME=`echo $FILE | sed -e 's/^.*SPECS\///' -e 's/\.spec//'`
+    PACKAGEDIR=`echo $FILE | sed -e 's/\/*.spec//'`
+    #Build SRPM
+    mock --buildsrpm --resultdir=$HOMEDIR/repo/"%(dist)s"/source/ --spec $FILE --source $PACKAGEDIR/SOURCES/
+  elif [[ $1 = *.src.rpm ]]; then
+    buildsrc $1
+  fi
   #Move last source logs to separate directory
   find $HOMEDIR/repo/fc$FEDVER/source/ -type f -name '*.log' -exec mv {} $HOMEDIR/repo/lastlogs/source/ \;
   #Move last x86_64 logs to separate directory
