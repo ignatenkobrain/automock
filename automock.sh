@@ -1,6 +1,6 @@
 #!/bin/bash
 HOMEDIR="/home/`whoami`"
-function buildsrc
+function buildrpm
 {
   #Build RPMs for x86_64
   mock -r fedora-$FEDVER-x86_64 --rebuild --resultdir=$HOMEDIR/repo/"%(dist)s"/"%(target_arch)s"/os/ $1
@@ -21,18 +21,15 @@ if [[ $1 = "clean" ]]; then
       createrepo $HOMEDIR/repo/fc$ver/i386/debug/
     done
   exit
-elif [[ $2 = 1[89] ]]; then
+elif [[ $1 = *.spec && $2 = 1[89] ]]; then
   FILE=`readlink -f $1`
   #FEDVER=`echo $FILE | sed -e 's/^.*\(fc1[8-9]\).*$/\1/' -e 's/fc//'`
   FEDVER="$2"
-  if [[ $1 = *.spec ]]; then
-    PACKAGENAME=`echo $FILE | sed -e 's/^.*SPECS\///' -e 's/\.spec//'`
-    PACKAGEDIR=`echo $FILE | sed -e 's/\/*.spec//'`
-    #Build SRPM
-    mock --buildsrpm --resultdir=$HOMEDIR/repo/"%(dist)s"/source/ --spec $FILE --source $PACKAGEDIR/SOURCES/
-  elif [[ $1 = *.src.rpm ]]; then
-    buildsrc $1
-  fi
+  PACKAGENAME=`basename $FILE | sed -e 's/\.spec//'`
+  PACKAGEDIR=`dirname $FILE`
+  #Build SRPM
+  mock --buildsrpm --resultdir=$HOMEDIR/repo/"%(dist)s"/source/ --spec $FILE --source $PACKAGEDIR/SOURCES/
+  buildrpm $HOMEDIR/repo/$FEDVER/source/$PACKAGENAME*.src.rpm
   #Move last source logs to separate directory
   find $HOMEDIR/repo/fc$FEDVER/source/ -type f -name '*.log' -exec mv {} $HOMEDIR/repo/lastlogs/source/ \;
   #Move last x86_64 logs to separate directory
