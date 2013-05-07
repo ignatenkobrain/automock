@@ -29,7 +29,7 @@ elif [[ $1 = *.spec && $2 = 1[89] ]]; then
   PACKAGEDIR=`dirname $FILE`
   #Build SRPM
   mock --buildsrpm --resultdir=$HOMEDIR/repo/"%(dist)s"/source/ --spec $FILE --source $PACKAGEDIR/SOURCES/
-  buildrpm $HOMEDIR/repo/$FEDVER/source/$PACKAGENAME*.src.rpm
+  buildrpm $HOMEDIR/repo/fc$FEDVER/source/$PACKAGENAME*.src.rpm
   #Move last source logs to separate directory
   find $HOMEDIR/repo/fc$FEDVER/source/ -type f -name '*.log' -exec mv {} $HOMEDIR/repo/lastlogs/source/ \;
   #Move last x86_64 logs to separate directory
