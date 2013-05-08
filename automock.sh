@@ -27,10 +27,8 @@ elif [[ $1 = *.spec && $2 = 1[89] ]]; then
   FEDVER="$2"
   PACKAGENAME=`basename $FILE | sed -e 's/\.spec//'`
   PACKAGEDIR=`dirname $FILE`
-  #Remove older SRPMs, RPMs and logs
+  #Remove older SRPMs and RPMs
   rm -rf $REPODIR/fc$FEDVER/source/$PACKAGENAME/ $REPODIR/fc$FEDVER/x86_64/$PACKAGENAME/ $REPODIR/fc$FEDVER/i386/$PACKAGENAME/
-  #Create logs dirs
-  mkdir -p $REPODIR/fc$FEDVER/source/$PACKAGENAME/logs/ $REPODIR/fc$FEDVER/x86_64/$PACKAGENAME/logs/ $REPODIR/fc$FEDVER/i386/$PACKAGENAME/logs/
   #Build SRPM
   mock --buildsrpm --resultdir=$REPODIR/"%(dist)s"/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
   #Delete temp mock files and SRPMs from source repo
