@@ -1,0 +1,17 @@
+[brain]
+name=Brain $releasever - $basearch
+baseurl=file:///home/brain/repo/fc$releasever/$basearch/os/
+enabled=1
+gpgcheck=0
+
+[brain-debuginfo]
+name=Brain $releasever - $basearch - Debug
+baseurl=file:///home/brain/repo/fc$releasever/$basearch/debug/
+enabled=0
+gpgcheck=0
+
+[brain-source]
+name=Brain $releasever - Source
+baseurl=file:///home/brain/repo/fc$releasever/source/
+enabled=0
+gpgcheck=0
