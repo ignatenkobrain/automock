@@ -13,14 +13,9 @@ function build_clean
   #Update $1 repo
   updaterepo $1
 }
-if [[ $1 = "clean" ]]; then
+if [[ $1 = clean ]]; then
   rm -rf $REPODIR/
   mkdir $REPODIR/
-  for (( ver=18 ; ver<=19 ; ver++ ))
-    do
-      mkdir $REPODIR/fc$ver/ $REPODIR/fc$ver/x86_64/ $REPODIR/fc$ver/i386/ $REPODIR/fc$ver/source
-    done
-  exit
 elif [[ $1 = *.spec && $2 = 1[89] ]]; then
   FILE=`readlink -f $1`
   #FEDVER=`echo $FILE | sed -e 's/^.*\(fc1[8-9]\).*$/\1/' -e 's/fc//'`
