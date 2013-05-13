@@ -17,8 +17,23 @@ if [[ $1 = clean ]]; then
   rm -rf $REPODIR/
   mkdir $REPODIR/
 elif [[ $1 = *.spec && $2 = 1[89] ]]; then
+  case $3 in
+  x86_64|amd64)
+    build_clean "x86_64"
+    ;;
+  i386|i586|i686)
+    build_clean "i386"
+    ;;
+  all)
+    build_clean "x86_64"
+    build_clean "i386"
+    ;;
+  *)
+    echo "Use arch"
+    exit
+    ;;
+  esac
   FILE=`readlink -f $1`
-  #FEDVER=`echo $FILE | sed -e 's/^.*\(fc1[8-9]\).*$/\1/' -e 's/fc//'`
   FEDVER="$2"
   PACKAGENAME=`basename $FILE | sed -e 's/\.spec//'`
   PACKAGEDIR=`dirname $FILE`
@@ -30,6 +45,4 @@ elif [[ $1 = *.spec && $2 = 1[89] ]]; then
   find $REPODIR/fc$FEDVER/source/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   #Update source repo
   updaterepo "source"
-  build_clean "x86_64"
-  build_clean "i386"
 fi
