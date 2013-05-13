@@ -1,11 +1,11 @@
 [brain]
 name=Brain $releasever - $basearch
-baseurl=file:///home/brain/repo/fc$releasever/$basearch/
+baseurl=http://ignatenkobrain.asuscomm.com:8080/fc$releasever/$basearch/
 enabled=1
 gpgcheck=0
 
 [brain-source]
 name=Brain $releasever - Source
-baseurl=file:///home/brain/repo/fc$releasever/source/
+baseurl=http://ignatenkobrain.asuscomm.com:8080/fc$releasever/source/
 enabled=0
 gpgcheck=0
