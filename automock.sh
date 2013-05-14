@@ -26,7 +26,7 @@ elif [[ $1 = *.spec && $2 = 1[89] ]]; then
   #Create dirs
   mkdir -p $REPODIR/fc$FEDVER/source/$PACKAGENAME/ $REPODIR/fc$FEDVER/x86_64/$PACKAGENAME/ $REPODIR/fc$FEDVER/i386/$PACKAGENAME/
   #Build SRPM
-  mock -r fedora-$FEDVER-x86_64 --buildsrpm --resultdir=$REPODIR/"%(dist)s"/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
+  mock -r fedora-$FEDVER-`arch` --buildsrpm --resultdir=$REPODIR/"%(dist)s"/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
   #Delete temp mock files and SRPMs from source repo
   find $REPODIR/fc$FEDVER/source/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   #Update source repo
