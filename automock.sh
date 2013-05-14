@@ -2,7 +2,7 @@
 REPODIR="/home/repos"
 function updaterepo
 {
-  createrepo --update $REPODIR/fc$FEDVER/$1/
+  createrepo $REPODIR/fc$FEDVER/$1/
 }
 function build_clean
 {
@@ -12,10 +12,11 @@ function build_clean
   find $REPODIR/fc$FEDVER/$1/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
   #Update $1 repo
   updaterepo $1
+  #Call update nginx selinux
+  `dirname $0`/nginx_selinux.sh "$REPODIR"
 }
 if [[ $1 = clean ]]; then
   rm -rf $REPODIR/*
-#  mkdir $REPODIR/
 elif [[ $1 = *.spec && $2 = 1[89] ]]; then
   FILE=`readlink -f $1`
   FEDVER="$2"
@@ -31,6 +32,8 @@ elif [[ $1 = *.spec && $2 = 1[89] ]]; then
   find $REPODIR/fc$FEDVER/source/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   #Update source repo
   updaterepo "source"
+  #Call update nginx selinux
+  `dirname $0`/nginx_selinux.sh "$REPODIR"
   case $3 in
   x86_64|amd64)
     build_clean "x86_64"
