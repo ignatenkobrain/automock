@@ -15,6 +15,6 @@ How to use automock:
 Clean local repository:
 $ /path/to/automock.sh clean
 Build package from .spec:
-$ /path/to/automock.sh /path/to/spec version_of_fedora
-Example to build control-center to Fedora 19:
-$ /home/brain/git/automock/automock.sh ~/rpmbuild/SPECS/control-center.spec 19
+$ /path/to/automock.sh /path/to/spec version_of_fedora architecture
+Example to build control-center to Fedora 19 to all architectures:
+$ /home/brain/git/automock/automock.sh ~/rpmbuild/SPECS/control-center.spec 19 all
