@@ -14,6 +14,8 @@ Example tree:
 How to use automock:
 Clean local repository:
 $ /path/to/automock.sh clean
+Update local repository:
+$ /path/to/automock.sh update
 Build package from .spec:
 $ /path/to/automock.sh /path/to/spec version_of_fedora architecture
 Example to build control-center to Fedora 19 to all architectures:
