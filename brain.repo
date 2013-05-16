@@ -2,10 +2,12 @@
 name=Brain $releasever - $basearch
 baseurl=http://ignatenkobrain.asuscomm.com:8080/fc$releasever/$basearch/
 enabled=1
+skip_if_unavailable=1
 gpgcheck=0
 
 [brain-source]
 name=Brain $releasever - Source
 baseurl=http://ignatenkobrain.asuscomm.com:8080/fc$releasever/source/
 enabled=0
+skip_if_unavailable=1
 gpgcheck=0
