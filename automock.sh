@@ -40,20 +40,6 @@ elif [[ $1 = *.spec && $2 = 1[89] ]]; then
 	# Update source repo
 	updaterepo "source"
 	updateselinux
-	case $3 in
-		x86_64)
-			build_clean "x86_64"
-		;;
-		i386)
-			build_clean "i386"
-		;;
-		all)
-			build_clean "x86_64"
-			build_clean "i386"
-		;;
-		*)
-			echo "Use arch"
-			exit
-		;;
-	esac
+	build_clean "x86_64"
+	build_clean "i386"
 fi
