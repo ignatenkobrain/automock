@@ -12,7 +12,7 @@ function updateselinux
 function build_clean
 {
 	# Build RPMs for x86_64
-	mock -r brain-$FEDVER-$1 --rebuild --resultdir=$REPODIR/"%(dist)s"/$1/$PACKAGENAME/ $REPODIR/fc$FEDVER/source/$PACKAGENAME/*.src.rpm
+	mock -r brain-$FEDVER-$1 --rebuild --resultdir=$REPODIR/fc$FEDVER/$1/$PACKAGENAME/ $REPODIR/fc$FEDVER/source/$PACKAGENAME/*.src.rpm
 	# Delete temp mock files and SRPMs from $1 repo
 	find $REPODIR/fc$FEDVER/$1/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
 	# Update $1 repo
@@ -38,7 +38,7 @@ elif [[ $1 = *.spec && $2 = 1[89] ]]; then
 	# Move sources to separate dir
 	find $PACKAGEDIR -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} $PACKAGEDIR/SOURCES/ \;
 	# Build SRPM
-	mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPODIR/"%(dist)s"/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
+	mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPODIR/fc$FEDVER/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
 	# Move sources to previous dir
 	mv -f $PACKAGEDIR/SOURCES/* $PACKAGEDIR/
 	# Delete temporary src dir
