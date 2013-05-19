@@ -33,8 +33,16 @@ elif [[ $1 = *.spec && $2 = 1[89] ]]; then
 	rm -rf $REPODIR/fc$FEDVER/source/$PACKAGENAME/ $REPODIR/fc$FEDVER/x86_64/$PACKAGENAME/ $REPODIR/fc$FEDVER/i386/$PACKAGENAME/
 	# Create dirs
 	mkdir -p $REPODIR/fc$FEDVER/source/$PACKAGENAME/ $REPODIR/fc$FEDVER/x86_64/$PACKAGENAME/ $REPODIR/fc$FEDVER/i386/$PACKAGENAME/
+	# Create src dir (temporary)
+	mkdir -p $PACKAGEDIR/SOURCES/
+	# Move sources to separate dir
+	find $PACKAGEDIR -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} $PACKAGEDIR/SOURCES/ \;
 	# Build SRPM
 	mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPODIR/"%(dist)s"/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
+	# Move sources to previous dir
+	mv -f $PACKAGEDIR/SOURCES/* $PACKAGEDIR/
+	# Delete temporary src dir
+	rm -rf $PACKAGEDIR/SOURCES/
 	# Delete temp mock files and SRPMs from source repo
 	find $REPODIR/fc$FEDVER/source/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
 	# Update source repo
