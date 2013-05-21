@@ -24,11 +24,20 @@ if [[ $1 = clean ]]; then
 elif [[ $1 = update ]]; then
 	find $REPODIR -type d -regextype "posix-extended" -regex '.*\/(i386|source|x86_64)' -exec createrepo {} \;
 	updateselinux
-elif [[ $1 = *.spec && $2 = 1[89] ]]; then
-	FILE=`readlink -f $1`
-	FEDVER="$2"
-	PACKAGENAME=`basename $FILE | sed -e 's/\.spec//'`
-	PACKAGEDIR=`dirname $FILE`
+elif [[ $1 = git* && $3 = 1[89] ]]; then
+	# 
+	cd /tmp/
+	# Cutting reponame
+	PACKAGENAME = `sed -e 's/^.*\///' -e 's/\.git$//' $1`
+	# Cloning git repo
+	git clone $PACKAGENAME
+	# 
+	cd /tmp/$PACKAGENAME/
+	# Reset HEAD to sha
+	git reset --hard $2
+	PACKAGEDIR="/tmp/$PACKAGENAME"
+	FILE=`readlink -f $PACKAGEDIR/*.spec`
+	FEDVER="$3"
 	# Remove older SRPMs and RPMs
 	rm -rf $REPODIR/fc$FEDVER/source/$PACKAGENAME/ $REPODIR/fc$FEDVER/x86_64/$PACKAGENAME/ $REPODIR/fc$FEDVER/i386/$PACKAGENAME/
 	# Create dirs
@@ -39,6 +48,8 @@ elif [[ $1 = *.spec && $2 = 1[89] ]]; then
 	find $PACKAGEDIR -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} $PACKAGEDIR/SOURCES/ \;
 	# Build SRPM
 	mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPODIR/fc$FEDVER/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
+	# Clean git
+	rm -rf $PACKAGEDIR
 	# Move sources to previous dir
 	mv -f $PACKAGEDIR/SOURCES/* $PACKAGEDIR/
 	# Delete temporary src dir
