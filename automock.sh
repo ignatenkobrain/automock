@@ -1,9 +1,5 @@
 #!/bin/bash
 REPODIR="/home/repos"
-function updaterepo
-{
-  createrepo --update $REPODIR/fc$FEDVER/$1/
-}
 function updateselinux
 {
   # Call update nginx selinux
@@ -15,8 +11,6 @@ function build_clean
   mock -r brain-$FEDVER-$1 --rebuild --resultdir=$REPODIR/fc$FEDVER/$1/$PACKAGENAME/ $REPODIR/fc$FEDVER/source/$PACKAGENAME/*.src.rpm
   # Delete temp mock files and SRPMs from $1 repo
   find $REPODIR/fc$FEDVER/$1/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
-  # Update $1 repo
-  updaterepo $1
   updateselinux
 }
 if [[ $1 = clean ]]; then
@@ -50,8 +44,6 @@ elif [[ $1 = git* && $3 = 1[89] ]]; then
   mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPODIR/fc$FEDVER/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
   # Delete temp mock files and SRPMs from source repo
   find $REPODIR/fc$FEDVER/source/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
-  # Update source repo
-  updaterepo "source"
   updateselinux
   build_clean "x86_64"
   build_clean "i386"
