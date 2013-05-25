@@ -2,7 +2,7 @@
 REPODIR="/home/repos"
 function updaterepo
 {
-  createrepo $REPODIR/fc$FEDVER/$1/
+  createrepo --update $REPODIR/fc$FEDVER/$1/
 }
 function updateselinux
 {
@@ -22,7 +22,8 @@ function build_clean
 if [[ $1 = clean ]]; then
   rm -rf $REPODIR/*
 elif [[ $1 = update ]]; then
-  find $REPODIR -type d -regextype "posix-extended" -regex '.*\/(i386|source|x86_64)' -exec createrepo {} \;
+  find $REPODIR/fc18/ -type d -regextype "posix-extended" -regex '.*\/(i386|source|x86_64)' -exec createrepo --update {} \;
+  find $REPODIR/fc19/ -type d -regextype "posix-extended" -regex '.*\/(i386|source|x86_64)' -exec createrepo --update {} \;
   updateselinux
 elif [[ $1 = git* && $3 = 1[89] ]]; then
   # Cutting reponame
