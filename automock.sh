@@ -7,7 +7,7 @@ function updaterepo
 function updateselinux
 {
   # Call update nginx selinux
-  `dirname $0`/nginx_selinux.sh "$REPODIR"
+  $REPODIR/nginx_selinux.sh "$REPODIR"
 }
 function build_clean
 {
