@@ -25,14 +25,12 @@ elif [[ $1 = update ]]; then
   find $REPODIR -type d -regextype "posix-extended" -regex '.*\/(i386|source|x86_64)' -exec createrepo {} \;
   updateselinux
 elif [[ $1 = git* && $3 = 1[89] ]]; then
-  # 
-  cd /tmp/
   # Cutting reponame
-  PACKAGENAME = `sed -e 's/^.*\///' -e 's/\.git$//' $1`
-  # Cloning git repo
-  git clone $PACKAGENAME
+  PACKAGENAME = `echo $1 | sed -e 's/^.*\///' -e 's/\.git$//'`
   # Initializate Package directory
   PACKAGEDIR="/tmp/$PACKAGENAME"
+  # Cloning git repo
+  git clone $PACKAGENAME $PACKAGEDIR
   # 
   cd $PACKAGEDIR
   # Reset HEAD to sha
