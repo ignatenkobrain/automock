@@ -26,11 +26,11 @@ elif [[ $1 = update ]]; then
   updateselinux
 elif [[ $1 = git* && $3 = 1[89] ]]; then
   # Cutting reponame
-  PACKAGENAME = `echo $1 | sed -e 's/^.*\///' -e 's/\.git$//'`
+  PACKAGENAME=`echo $1 | sed -e 's/^.*\///' -e 's/\.git$//'`
   # Initializate Package directory
   PACKAGEDIR="/tmp/$PACKAGENAME"
   # Cloning git repo
-  git clone $PACKAGENAME $PACKAGEDIR
+  git clone $1 $PACKAGEDIR
   # 
   cd $PACKAGEDIR
   # Reset HEAD to sha
@@ -49,10 +49,6 @@ elif [[ $1 = git* && $3 = 1[89] ]]; then
   mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPODIR/fc$FEDVER/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
   # Clean git
   rm -rf $PACKAGEDIR
-  # Move sources to previous dir
-  mv -f $PACKAGEDIR/SOURCES/* $PACKAGEDIR/
-  # Delete temporary src dir
-  rm -rf $PACKAGEDIR/SOURCES/
   # Delete temp mock files and SRPMs from source repo
   find $REPODIR/fc$FEDVER/source/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   # Update source repo
