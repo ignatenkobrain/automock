@@ -47,8 +47,6 @@ elif [[ $1 = git* && $3 = 1[89] ]]; then
   find $PACKAGEDIR -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} $PACKAGEDIR/SOURCES/ \;
   # Build SRPM
   mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPODIR/fc$FEDVER/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
-  # Clean git
-  rm -rf $PACKAGEDIR
   # Delete temp mock files and SRPMs from source repo
   find $REPODIR/fc$FEDVER/source/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   # Update source repo
@@ -56,4 +54,6 @@ elif [[ $1 = git* && $3 = 1[89] ]]; then
   updateselinux
   build_clean "x86_64"
   build_clean "i386"
+  # Clean git
+  rm -rf $PACKAGEDIR
 fi
