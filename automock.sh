@@ -1,52 +1,56 @@
 #!/bin/bash
-REPODIR="/home/repos"
+REPODIR="/home/repos/build"
 function updateselinux
 {
-  # Call update nginx selinux
-  $REPODIR/nginx_selinux.sh "$REPODIR"
+  SELINUXSTATUS=`sestatus | grep "SELinux status" | awk '{print($3)}'`
+  SELINUXHOMEDIRSSTATUS=`getsebool httpd_enable_homedirs | awk '{print($3)}'`
+  if [[ $SELINUXSTATUS = enabled ]]; then
+    if [[ $1 = /home* && $SELINUXHOMEDIRSSTATUS = off ]]; then
+      sudo setsebool -P httpd_enable_homedirs 1
+    fi
+    sudo semanage fcontext -a -t public_content_t "$REPODIR(/.*)?"
+    sudo restorecon -F -R -v $1
+  fi
 }
 function build_clean
 {
   # Build RPMs for x86_64
-  mock -r brain-$FEDVER-$1 --rebuild --resultdir=$REPODIR/fc$FEDVER/$1/$PACKAGENAME/ $REPODIR/fc$FEDVER/source/$PACKAGENAME/*.src.rpm
+  mock -r brain-$FEDVER-$1 --arch=$2 --rebuild --resultdir=$REPO/"%(dist)s"/"%(target_arch)s"/ $REPO/source/*.src.rpm
   # Delete temp mock files and SRPMs from $1 repo
-  find $REPODIR/fc$FEDVER/$1/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
+  find $REPO/fc$FEDVER/$1/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
   updateselinux
 }
-if [[ $1 = clean ]]; then
-  rm -rf $REPODIR/*
-elif [[ $1 = update ]]; then
-  find $REPODIR/fc18/ -type d -regextype "posix-extended" -regex '.*\/(i386|source|x86_64)' -exec createrepo --update {} \;
-  find $REPODIR/fc19/ -type d -regextype "posix-extended" -regex '.*\/(i386|source|x86_64)' -exec createrepo --update {} \;
-  updateselinux
-elif [[ $1 = git* && $3 = 1[89] ]]; then
+if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
+  # Initializate REPO variable at date
+  REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`"
   # Cutting reponame
   PACKAGENAME=`echo $1 | sed -e 's/^.*\///' -e 's/\.git$//'`
-  # Initializate Package directory
-  PACKAGEDIR="/tmp/$PACKAGENAME"
+  # Initializate git dirs
+  export GIT_WORK_TREE="${REPO}"
+  export GIT_DIR="${GIT_WORK_TREE}/.git"
   # Cloning git repo
-  git clone $1 $PACKAGEDIR
-  # 
-  cd $PACKAGEDIR
-  # Reset HEAD to sha
+  git clone $1 $REPO
+  # Reset HEAD to sha in $2
   git reset --hard $2
-  FILE=`readlink -f $PACKAGEDIR/*.spec`
+  # Read full link to spec file
+  FILE=$(readlink -f $REPO/*.spec)
+  # Initializate version Fedora
   FEDVER="$3"
-  # Remove older SRPMs and RPMs
-  rm -rf $REPODIR/fc$FEDVER/source/$PACKAGENAME/ $REPODIR/fc$FEDVER/x86_64/$PACKAGENAME/ $REPODIR/fc$FEDVER/i386/$PACKAGENAME/
-  # Create dirs
-  mkdir -p $REPODIR/fc$FEDVER/source/$PACKAGENAME/ $REPODIR/fc$FEDVER/x86_64/$PACKAGENAME/ $REPODIR/fc$FEDVER/i386/$PACKAGENAME/
   # Create src dir (temporary)
-  mkdir -p $PACKAGEDIR/SOURCES/
+  mkdir -p $REPO/SOURCES/
   # Move sources to separate dir
-  find $PACKAGEDIR -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} $PACKAGEDIR/SOURCES/ \;
+  find $REPO -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} $REPO/SOURCES/ \;
   # Build SRPM
-  mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPODIR/fc$FEDVER/source/$PACKAGENAME/ --spec $FILE --source $PACKAGEDIR/SOURCES/
+  mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPO/"%(dist)s"/source/ --spec $FILE --source $REPO/SOURCES/
   # Delete temp mock files and SRPMs from source repo
-  find $REPODIR/fc$FEDVER/source/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
+  find $REPO/fc$FEDVER/source/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   updateselinux
-  build_clean "x86_64"
-  build_clean "i386"
-  # Clean git
-  rm -rf $PACKAGEDIR
+  build_clean "x86_64" "x86_64"
+  build_clean "x86_64" "i386"
+  build_clean "i386" "i386"
+elif [[ $1 = clean ]]; then
+  rm -rf $REPODIR/*
+elif [[ $1 = update ]]; then
+  createrepo --update $REPODIR
+  updateselinux
 fi
