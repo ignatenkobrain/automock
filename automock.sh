@@ -14,6 +14,8 @@ function updateselinux
 }
 function build_clean
 {
+  # Create dirs
+  mkdir -p $REPO/fc$FEDVER/$1/$2/
   # Build RPMs for x86_64
   mock -r brain-$FEDVER-$1 --arch=$2 --rebuild --resultdir=$REPO/fc$FEDVER/$1/$2/ $REPO/source/*.src.rpm
   # Delete temp mock files and SRPMs from $1 repo
