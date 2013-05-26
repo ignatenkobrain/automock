@@ -5,7 +5,7 @@ function updateselinux
   SELINUXSTATUS=`sestatus | grep "SELinux status" | awk '{print($3)}'`
   SELINUXHOMEDIRSSTATUS=`getsebool httpd_enable_homedirs | awk '{print($3)}'`
   if [[ $SELINUXSTATUS = enabled ]]; then
-    if [[ $1 = /home* && $SELINUXHOMEDIRSSTATUS = off ]]; then
+    if [[ $REPODIR = /home/* && $SELINUXHOMEDIRSSTATUS = off ]]; then
       sudo setsebool -P httpd_enable_homedirs 1
     fi
     sudo semanage fcontext -a -t public_content_t "$REPODIR(/.*)?"
@@ -55,6 +55,5 @@ if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
 elif [[ $1 = clean ]]; then
   rm -rf $REPODIR/*
 elif [[ $1 = update ]]; then
-  createrepo --update $REPODIR
   updateselinux
 fi
