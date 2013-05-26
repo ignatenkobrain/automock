@@ -38,7 +38,7 @@ if [[ $1 =~ ^git://.*\.git\?#[a-z0-9]{40}$ && $2 = 1[89] ]]; then
   # Read full link to spec file
   FILE=$(readlink -f ${REPO}/*.spec)
   # Initializate version Fedora
-  FEDVER="$3"
+  FEDVER="$2"
   # Create src dir (temporary)
   mkdir -p ${REPO}/SOURCES/
   # Move sources to separate dir
