@@ -35,7 +35,7 @@ ssh -p 2222 ignatenkobrain.asuscomm.com "automock.sh git://github.com/ignatenkob
 
 Adding user:
 
-# useradd -G nginx -s /bin/bash build
+# useradd -G nginx,mock -s /bin/bash build
 # mkdir /home/build/.ssh/
 # touch /home/build/.ssh/authorized_keys
 # chown -R build:build /home/build/.ssh/
