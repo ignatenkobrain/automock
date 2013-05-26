@@ -1,6 +1,6 @@
 #!/bin/sh
 case "${SSH_ORIGINAL_COMMAND}" in
-  automock.sh\ *)
+  automock.sh*)
     /home/repos/automock/${SSH_ORIGINAL_COMMAND}
     ;;
   *)
