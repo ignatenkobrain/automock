@@ -1,22 +1,35 @@
 automock
 ========
 Build with mock at one command
+
 Requirements to use automock:
 1. .spec file and source files;
-2. Source files should be in the same directory as the .spec file in the folder SOURCES;
+2. Source files should be in the same directory as the .spec file;
 3. Installed mock.
-Example tree:
+Example tree in git:
 .
-|-- control-center.spec
-`-- SOURCES
-    |-- distro-logo.patch
-    `-- gnome-control-center-3.8.1.5.tar.xz
-How to use automock:
+├── libfprint-0.5.0.tar.xz
+├── libfprint.spec
+├── README.md
+└── upeke2-add-147e-2020-IDs.patch
+
+How to use automock from local:
+
 Clean local repository:
 $ /path/to/automock.sh clean
 Update local repository:
 $ /path/to/automock.sh update
-Build package from .spec:
-$ /path/to/automock.sh /path/to/spec version_of_fedora architecture
-Example to build control-center to Fedora 19 to all architectures:
-$ /home/brain/git/automock/automock.sh ~/rpmbuild/SPECS/control-center.spec 19 all
+Build package from git:
+$ /path/to/automock.sh git://git_url/name.git?#hash version_of_fedora
+Example to build libfprint to Fedora 19:
+$ /home/repos/automock/automock.sh git://github.com/ignatenkobrain/libfprint.git?#830dc01abb45162e429bef59dc8a4c85a42be4ea 19
+
+How to use automock from ssh:
+
+Clean local repository:
+ssh -p 2222 ignatenkobrain.asuscomm.com "automock.sh clean"
+Update local repository:
+ssh -p 2222 ignatenkobrain.asuscomm.com "automock.sh update"
+Example to build libfprint to Fedora 19:
+ssh -p 2222 ignatenkobrain.asuscomm.com "automock.sh git://github.com/ignatenkobrain/libfprint.git?#830dc01abb45162e429bef59dc8a4c85a42be4ea 19"
+
