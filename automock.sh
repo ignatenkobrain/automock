@@ -21,10 +21,10 @@ function build_clean
   updateselinux
 }
 if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
-  # Initializate REPO variable at date
-  REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`"
   # Cutting reponame
-  PACKAGENAME=`echo $1 | sed -e 's/^.*\///' -e 's/\.git$//'`
+  REPONAME=`echo $1 | sed -e 's/^.*\///' -e 's/\.git$//'`
+  # Initializate REPO variable at date
+  REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"` ($REPONAME)"
   # Cloning git repo
   git clone $1 $REPO
   # Initializate git dirs
