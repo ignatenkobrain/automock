@@ -42,6 +42,10 @@ if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
   find $REPO -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} $REPO/SOURCES/ \;
   # Build SRPM
   mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPO/fc$FEDVER/source/ --spec $FILE --source $REPO/SOURCES/
+  # Move sources from separate dir
+  mv $REPO/SOURCES/* $REPO/
+  # Remove temp separate dir for sources
+  rm -rf $REPO/SOURCES/
   # Delete temp mock files and SRPMs from source repo
   find $REPO/fc$FEDVER/source/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   updateselinux
