@@ -29,7 +29,7 @@ if [[ $1 =~ ^git://.*\.git\?#[a-z0-9]{40}$ && $2 = 1[89] ]]; then
   # Initializate REPO variable at date
   REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`-$REPONAME"
   # Cloning git repo
-  git clone $1 $REPO
+  git clone ${1%?#*} ${REPO}
   # Initializate git dirs
   export GIT_WORK_TREE="${REPO}"
   export GIT_DIR="${GIT_WORK_TREE}/.git"
