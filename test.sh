@@ -1,7 +1,7 @@
 #!/bin/sh
 case "${SSH_ORIGINAL_COMMAND}" in
-  "/home/repos/automock/automock.sh *")
-    ${SSH_ORIGINAL_COMMAND}
+  automock.sh\ *)
+    /home/repos/automock/${SSH_ORIGINAL_COMMAND}
     ;;
   *)
     echo "Not priveleged!"
