@@ -1,5 +1,6 @@
 #!/bin/bash
 REPODIR="/home/repos/build"
+LOCKFILE="${REPODIR}/build.lock"
 function updateselinux
 {
   SELINUXSTATUS=`sestatus | grep "SELinux status" | awk '{print($3)}'`
@@ -20,43 +21,59 @@ function build_clean
   find ${REPO}/build/${1}/${2} -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
   updateselinux
 }
-if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
-  # Cutting reponame
-  REPONAME="${1##git:*/}"
-  REPONAME="${REPONAME%.*}"
-  # Cutting commit
-  COMMIT="${1:(-40)}"
-  # Initializate version Fedora
-  FEDVER="${2}"
-  # Initializate REPO variable at date
-  REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`-${REPONAME}-fc${FEDVER}"
-  # Cloning git repo
-  git clone ${1%?#*} ${REPO}
-  # Initializate git dirs
-  export GIT_WORK_TREE="${REPO}"
-  export GIT_DIR="${GIT_WORK_TREE}/.git"
-  # Reset HEAD to sha in ${2}
-  git reset --hard ${COMMIT}
-  # Read full link to spec file
-  FILE=$(readlink -f ${REPO}/*.spec)
-  # Create src dir (temporary)
-  mkdir -p ${REPO}/SOURCES/
-  # Move sources to separate dir
-  find ${REPO} -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} ${REPO}/SOURCES/ \;
-  # Build SRPM
-  mock -r fedora-${FEDVER}-`arch` --buildsrpm --resultdir=${REPO}/build/source/ --spec ${FILE} --source ${REPO}/SOURCES/
-  # Move sources from separate dir
-  mv ${REPO}/SOURCES/* ${REPO}/
-  # Remove temp separate dir for sources
-  rm -rf ${REPO}/SOURCES/
-  # Delete temp mock files and SRPMs from source repo
-  find ${REPO}/build/source/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
-  updateselinux
-  build_clean "x86_64" "x86_64"
-  build_clean "x86_64" "i386"
-  build_clean "i386" "i386"
-elif [[ ${1} = clean ]]; then
-  rm -rf ${REPODIR}/*
-elif [[ ${1} = update ]]; then
-  updateselinux
+if [ -e ${LOCKFILE} ]; then
+  cat ${LOCKFILE}
+else
+  if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
+    # Cutting reponame
+    REPONAME="${1##git:*/}"
+    REPONAME="${REPONAME%.*}"
+    # Cutting commit
+    COMMIT="${1:(-40)}"
+    # Initializate version Fedora
+    FEDVER="${2}"
+    # Initializate REPO variable at date
+    REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`-${REPONAME}-fc${FEDVER}"
+    # Create lockfile
+    echo "Building ${REPO}" > ${LOCKFILE}
+    # Cloning git repo
+    git clone ${1%?#*} ${REPO}
+    # Initializate git dirs
+    export GIT_WORK_TREE="${REPO}"
+    export GIT_DIR="${GIT_WORK_TREE}/.git"
+    # Reset HEAD to sha in ${2}
+    git reset --hard ${COMMIT}
+    # Read full link to spec file
+    FILE=$(readlink -f ${REPO}/*.spec)
+    # Create src dir (temporary)
+    mkdir -p ${REPO}/SOURCES/
+    # Move sources to separate dir
+    find ${REPO} -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} ${REPO}/SOURCES/ \;
+    # Build SRPM
+    mock -r fedora-${FEDVER}-`arch` --buildsrpm --resultdir=${REPO}/build/source/ --spec ${FILE} --source ${REPO}/SOURCES/
+    # Move sources from separate dir
+    mv ${REPO}/SOURCES/* ${REPO}/
+    # Remove temp separate dir for sources
+    rm -rf ${REPO}/SOURCES/
+    # Delete temp mock files and SRPMs from source repo
+    find ${REPO}/build/source/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
+    updateselinux
+    build_clean "x86_64" "x86_64"
+    build_clean "x86_64" "i386"
+    build_clean "i386" "i386"
+    # Remove lockfile
+    rm -f ${LOCKFILE}
+  elif [[ ${1} = clean ]]; then
+    # Create lockfile
+    echo "Cleaning" > ${LOCKFILE}
+    rm -rf ${REPODIR}/*
+    # Remove lockfile
+    rm -f ${LOCKFILE}
+  elif [[ ${1} = update ]]; then
+    # Create lockfile
+    echo "Updating" > ${LOCKFILE}
+    updateselinux
+    # Remove lockfile
+    rm -f ${LOCKFILE}
+  fi
 fi
