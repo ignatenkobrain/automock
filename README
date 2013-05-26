@@ -33,3 +33,11 @@ ssh -p 2222 ignatenkobrain.asuscomm.com "automock.sh update"
 Example to build libfprint to Fedora 19:
 ssh -p 2222 ignatenkobrain.asuscomm.com "automock.sh git://github.com/ignatenkobrain/libfprint.git?#830dc01abb45162e429bef59dc8a4c85a42be4ea 19"
 
+Adding user:
+
+# useradd -s /bin/bash build
+# mkdir /home/build/.ssh/
+# touch /home/build/.ssh/authorized_keys
+# chown -R build:build /home/build/.ssh/
+# chmod 700 /home/build/.ssh/
+# chmod 600 /home/build/.ssh/authorized_keys

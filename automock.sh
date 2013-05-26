@@ -2,8 +2,8 @@
 REPODIR="/home/repos/build"
 function updateselinux
 {
-  SELINUXSTATUS=`$(which sestatus) | grep "SELinux status" | awk '{print($3)}'`
-  SELINUXHOMEDIRSSTATUS=`$(which getsebool) httpd_enable_homedirs | awk '{print($3)}'`
+  SELINUXSTATUS=`sestatus | grep "SELinux status" | awk '{print($3)}'`
+  SELINUXHOMEDIRSSTATUS=`getsebool httpd_enable_homedirs | awk '{print($3)}'`
   if [[ $SELINUXSTATUS = enabled ]]; then
     if [[ $REPODIR = /home/* && $SELINUXHOMEDIRSSTATUS = off ]]; then
       sudo setsebool -P httpd_enable_homedirs 1
