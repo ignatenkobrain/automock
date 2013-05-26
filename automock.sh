@@ -17,14 +17,14 @@ function build_clean
   # Create dirs
   mkdir -p $REPO/fc$FEDVER/$1/$2/
   # Build RPMs for x86_64
-  mock -r brain-$FEDVER-$1 --arch=$2 --rebuild --resultdir=$REPO/fc$FEDVER/$1/$2/ $REPO/source/*.src.rpm
+  mock -r brain-$FEDVER-$1 --arch $2 --rebuild --resultdir=$REPO/fc$FEDVER/$1/$2/ $REPO/source/*.src.rpm
   # Delete temp mock files and SRPMs from $1 repo
   find $REPO/fc$FEDVER/$1/$2 -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
   updateselinux
 }
 if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
   # Initializate REPO variable at date
-  REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`"
+  REPO="${REPODIR}/`date +"%d.%m.%Y-%H%M%S"`"
   # Cutting reponame
   PACKAGENAME=`echo $1 | sed -e 's/^.*\///' -e 's/\.git$//'`
   # Cloning git repo
