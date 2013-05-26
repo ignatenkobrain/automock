@@ -15,7 +15,7 @@ function updateselinux
 function build_clean
 {
   # Build RPMs for x86_64
-  mock -r brain-$FEDVER-$1 --arch $2 --rebuild --resultdir=$REPO/fc$FEDVER/$1/$2/ $REPO/fc$FEDVER/source/*.src.rpm
+  mock -r fedora-$FEDVER-$1 --arch $2 --rebuild --resultdir=$REPO/fc$FEDVER/$1/$2/ $REPO/fc$FEDVER/source/*.src.rpm
   # Delete temp mock files and SRPMs from $1 repo
   find $REPO/fc$FEDVER/$1/$2 -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
   updateselinux
@@ -41,7 +41,7 @@ if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
   # Move sources to separate dir
   find $REPO -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} $REPO/SOURCES/ \;
   # Build SRPM
-  mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPO/fc$FEDVER/source/ --spec $FILE --source $REPO/SOURCES/
+  mock -r fedora-$FEDVER-`arch` --buildsrpm --resultdir=$REPO/fc$FEDVER/source/ --spec $FILE --source $REPO/SOURCES/
   # Move sources from separate dir
   mv $REPO/SOURCES/* $REPO/
   # Remove temp separate dir for sources
