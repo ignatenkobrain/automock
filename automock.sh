@@ -9,7 +9,7 @@ function updateselinux
       sudo setsebool -P httpd_enable_homedirs 1
     fi
     sudo semanage fcontext -a -t public_content_t "$REPODIR(/.*)?"
-    sudo restorecon -F -R -v $1
+    sudo restorecon -F -R -v $REPODIR
   fi
 }
 function build_clean
