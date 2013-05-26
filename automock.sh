@@ -20,9 +20,12 @@ function build_clean
   find $REPO/fc$FEDVER/$1/$2 -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
   updateselinux
 }
-if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
+if [[ $1 =~ ^git://.*\.git\?#[a-z0-9]{40}$ && $2 = 1[89] ]]; then
   # Cutting reponame
-  REPONAME=`echo $1 | sed -e 's/^.*\///' -e 's/\.git$//'`
+  REPONAME="${1##git:*/}"
+  REPONAME="${REPONAME%.*}"
+  # Cutting commit
+  COMMIT="${1:(-40)}"
   # Initializate REPO variable at date
   REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`-$REPONAME"
   # Cloning git repo
@@ -31,13 +34,13 @@ if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
   export GIT_WORK_TREE="${REPO}"
   export GIT_DIR="${GIT_WORK_TREE}/.git"
   # Reset HEAD to sha in $2
-  git reset --hard $2
+  git reset --hard ${COMMIT}
   # Read full link to spec file
-  FILE=$(readlink -f $REPO/*.spec)
+  FILE=$(readlink -f ${REPO}/*.spec)
   # Initializate version Fedora
   FEDVER="$3"
   # Create src dir (temporary)
-  mkdir -p $REPO/SOURCES/
+  mkdir -p ${REPO}/SOURCES/
   # Move sources to separate dir
   find $REPO -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} $REPO/SOURCES/ \;
   # Build SRPM
