@@ -15,9 +15,9 @@ function updateselinux
 function build_clean
 {
   # Build RPMs for x86_64
-  mock -r brain-$FEDVER-$1 --arch=$2 --rebuild --resultdir=$REPO/"%(dist)s"/"%(target_arch)s"/ $REPO/source/*.src.rpm
+  mock -r brain-$FEDVER-$1 --arch=$2 --rebuild --resultdir=$REPO/fc$FEDVER/$1/$2/ $REPO/source/*.src.rpm
   # Delete temp mock files and SRPMs from $1 repo
-  find $REPO/fc$FEDVER/$1/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
+  find $REPO/fc$FEDVER/$1/$2 -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
   updateselinux
 }
 if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
@@ -41,9 +41,9 @@ if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
   # Move sources to separate dir
   find $REPO -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} $REPO/SOURCES/ \;
   # Build SRPM
-  mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPO/"%(dist)s"/source/ --spec $FILE --source $REPO/SOURCES/
+  mock -r brain-$FEDVER-`arch` --buildsrpm --resultdir=$REPO/fc$FEDVER/source/ --spec $FILE --source $REPO/SOURCES/
   # Delete temp mock files and SRPMs from source repo
-  find $REPO/fc$FEDVER/source/$PACKAGENAME/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
+  find $REPO/fc$FEDVER/source/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   updateselinux
   build_clean "x86_64" "x86_64"
   build_clean "x86_64" "i386"
