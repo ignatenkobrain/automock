@@ -25,11 +25,11 @@ if [[ $1 = git://*.git && $2 =~ ^[a-f0-9]{40}$ && $3 = 1[89] ]]; then
   REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`"
   # Cutting reponame
   PACKAGENAME=`echo $1 | sed -e 's/^.*\///' -e 's/\.git$//'`
+  # Cloning git repo
+  git clone $1 $REPO
   # Initializate git dirs
   export GIT_WORK_TREE="${REPO}"
   export GIT_DIR="${GIT_WORK_TREE}/.git"
-  # Cloning git repo
-  git clone $1 $REPO
   # Reset HEAD to sha in $2
   git reset --hard $2
   # Read full link to spec file
