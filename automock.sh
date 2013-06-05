@@ -1,11 +1,5 @@
 #!/bin/bash
 REPODIR="/home/repos/build"
-LOCKFILE="${REPODIR}/automock.lock"
-if [ ! lockfile -r 0 ${LOCKFILE} ]; then
-  echo "automock.sh alredy running"
-  echo "if other - delete automock.lock"
-  exit 1
-fi
 function updateselinux
 {
   SELINUXSTATUS=`sestatus | grep "SELinux status" | awk '{print($3)}'`
@@ -18,12 +12,16 @@ function updateselinux
     sudo restorecon -F -R -v $REPODIR
   fi
 }
+function repo
+{
+  createrepo --update $@
+}
 function build_clean
 {
   # Build RPMs for x86_64
-  mock -r fedora-${FEDVER}-${1} --arch ${2} --rebuild --resultdir=${REPO}/build/${1}/${2}/ ${REPO}/build/source/*.src.rpm
+  mock -r ${REPO}/fedora-${FEDVER}-${1}--rebuild --resultdir=${REPO}/build/${1}/ ${REPO}/build/source/*.src.rpm
   # Delete temp mock files and SRPMs from ${1} repo
-  find ${REPO}/build/${1}/${2} -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
+  find ${REPO}/build/${1}/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
   updateselinux
 }
 if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
@@ -36,8 +34,6 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   FEDVER="${2}"
   # Initializate REPO variable at date
   REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`-${REPONAME}-fc${FEDVER}"
-  # Create lockfile
-  lockfile ${LOCKFILE}
   # Cloning git repo
   git clone ${1%?#*} ${REPO}
   # Initializate git dirs
@@ -51,8 +47,10 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   mkdir -p ${REPO}/SOURCES/
   # Move sources to separate dir
   find ${REPO} -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} ${REPO}/SOURCES/ \;
+  # Copy original mock files
+  cp /etc/mock/fedora-${FEDVER}-{i386,x86_64}.cfg ${REPO}/
   # Build SRPM
-  mock -r fedora-${FEDVER}-`arch` --buildsrpm --resultdir=${REPO}/build/source/ --spec ${FILE} --source ${REPO}/SOURCES/
+  mock -r ${REPO}/fedora-${FEDVER}-`arch` --buildsrpm --resultdir=${REPO}/build/source/ --spec ${FILE} --source ${REPO}/SOURCES/
   # Move sources from separate dir
   mv ${REPO}/SOURCES/* ${REPO}/
   # Remove temp separate dir for sources
@@ -60,21 +58,15 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   # Delete temp mock files and SRPMs from source repo
   find ${REPO}/build/source/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   updateselinux
-  build_clean "x86_64" "x86_64"
-  build_clean "x86_64" "i386"
-  build_clean "i386" "i386"
-  # Remove lockfile
-  rm -f ${LOCKFILE}
+  build_clean "x86_64"
+  build_clean "i386"
 elif [[ ${1} = clean ]]; then
-  # Create lockfile
-  lockfile ${LOCKFILE}
+  # Clean
   rm -rf ${REPODIR}/*
-  # Remove lockfile
-  rm -f ${LOCKFILE}
+  # Create repodirs
+  mkdir -p ${REPODIR}/fc{18,19}/
+  # Create repodata
+  repo ${REPODIR}/fc{18,19}/
 elif [[ ${1} = update ]]; then
-  # Create lockfile
-  lockfile ${LOCKFILE}
   updateselinux
-  # Remove lockfile
-  rm -f ${LOCKFILE}
 fi
