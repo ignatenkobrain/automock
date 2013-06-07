@@ -25,6 +25,8 @@ function build_clean
   updateselinux
 }
 if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
+  # Get arch
+  ARCH="`arch`"
   # Cutting reponame
   REPONAME="${1##git:*/}"
   REPONAME="${REPONAME%.*}"
@@ -51,10 +53,15 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   cp /etc/mock/fedora-${FEDVER}-{i386,x86_64}.cfg ${REPO}/
   # Formatting REPO for sed regex
   REGEXREPO=`echo "${REPO}" | sed 's/\//\//'`
+  # Postfix for dist
+  POSTFIX="B"
+  # Custom DIST
+  DIST="`grep "config_opts\['dist'\]" fedora-${FEDVER}-${ARCH}.cfg | awk -F "'" '{print($4)}'`"
   # Edit mock configs
-  sed -i -e "2 s/^/config_opts['base_dir'] = '${REGEXREPO}'\n/" fedora-${FEDVER}-{i386,x86_64}.cfg
+  sed -i -e "2 s/^/config_opts['base_dir'] = '${REGEXREPO}'\n/" \
+         -e "6 s/^/config_opts['macros']['%dist']='.${DIST}.${POSTFIX}'\n/" fedora-${FEDVER}-{i386,x86_64}.cfg
   # Build SRPM
-  mock --no-cleanup-after -r ${REPO}/fedora-${FEDVER}-`arch` --buildsrpm --resultdir=${REPO}/build/source/ --spec ${FILE} --source ${REPO}/SOURCES/
+  mock --no-cleanup-after -r ${REPO}/fedora-${FEDVER}-${ARCH} --buildsrpm --resultdir=${REPO}/build/source/ --spec ${FILE} --source ${REPO}/SOURCES/
   # Move sources from separate dir
   mv ${REPO}/SOURCES/* ${REPO}/
   # Remove temp separate dir for sources
@@ -66,7 +73,7 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   build_clean "x86_64" "i386"
   build_clean "i386" "i386"
   # Unset all variables
-  unset REPONAME COMMIT FEDVER REPO GIT_WORK_TREE GIT_DIR FILE REGEXREPO
+  unset ARCH REPONAME COMMIT FEDVER REPO GIT_WORK_TREE GIT_DIR FILE REGEXREPO POSTFIX DIST
 elif [[ ${1} = clean ]]; then
   # Clean
   rm -rf ${REPODIR}/*
