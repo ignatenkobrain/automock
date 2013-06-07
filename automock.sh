@@ -19,7 +19,7 @@ function repo
 function build_clean
 {
   # Build RPMs for x86_64
-  mock -r ${REPO}/fedora-${FEDVER}-${1}--rebuild --resultdir=${REPO}/build/${1}/ ${REPO}/build/source/*.src.rpm
+  setarch ${2} mock --no-cleanup-after -r ${REPO}/fedora-${FEDVER}-${1}--rebuild --resultdir=${REPO}/build/${1}/ ${REPO}/build/source/*.src.rpm
   # Delete temp mock files and SRPMs from ${1} repo
   find ${REPO}/build/${1}/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
   updateselinux
@@ -49,8 +49,12 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   find ${REPO} -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} ${REPO}/SOURCES/ \;
   # Copy original mock files
   cp /etc/mock/fedora-${FEDVER}-{i386,x86_64}.cfg ${REPO}/
+  # Formatting REPO for sed regex
+  REGEXREPO=`echo "${REPO}" | sed 's/\//\//'`
+  # Edit mock configs
+  sed -i -e "2 s/^/config_opts['base_dir'] = '${REGEXREPO}'\n/" fedora-${FEDVER}-{i386,x86_64}.cfg
   # Build SRPM
-  mock -r ${REPO}/fedora-${FEDVER}-`arch` --buildsrpm --resultdir=${REPO}/build/source/ --spec ${FILE} --source ${REPO}/SOURCES/
+  mock --no-cleanup-after -r ${REPO}/fedora-${FEDVER}-`arch` --buildsrpm --resultdir=${REPO}/build/source/ --spec ${FILE} --source ${REPO}/SOURCES/
   # Move sources from separate dir
   mv ${REPO}/SOURCES/* ${REPO}/
   # Remove temp separate dir for sources
@@ -58,8 +62,11 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   # Delete temp mock files and SRPMs from source repo
   find ${REPO}/build/source/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   updateselinux
-  build_clean "x86_64"
-  build_clean "i386"
+  build_clean "x86_64" "x86_64"
+  build_clean "x86_64" "i386"
+  build_clean "i386" "i386"
+  # Unset all variables
+  unset REPONAME COMMIT FEDVER REPO GIT_WORK_TREE GIT_DIR FILE REGEXREPO
 elif [[ ${1} = clean ]]; then
   # Clean
   rm -rf ${REPODIR}/*
@@ -70,3 +77,5 @@ elif [[ ${1} = clean ]]; then
 elif [[ ${1} = update ]]; then
   updateselinux
 fi
+# Unset repodir
+unset REPODIR
