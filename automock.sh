@@ -77,11 +77,11 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   build_clean "i386" "i386"
 elif [[ ${1} = clean ]]; then
   # Clean
-  rm -rf ${REPODIR}/*
+  rm -rf "${REPODIR}"/*
   # Create repodirs
   mkdir -p "${REPODIR}"/fc{18,19}/
   # Create repodata
-  repo "${REPODIR}/fc{18,19}/"
+  repo "${REPODIR}"/fc{18,19}/
 elif [[ ${1} = update ]]; then
   updateselinux
 fi
