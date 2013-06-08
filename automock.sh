@@ -91,4 +91,4 @@ elif [[ ${1} = clean ]]; then
 elif [[ ${1} = update ]]; then
   updateselinux
 fi
-chown -R nginx:nginx "${REPODIR}"
+chown -R `whoami`:nginx "${REPODIR}"
