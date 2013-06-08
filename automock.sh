@@ -1,5 +1,5 @@
 #!/bin/bash
-REPODIR="/home/repos/build/"
+REPODIR="/home/repos/build"
 # Get arch
 MAINARCH=`arch`
 if [[ ${MAINARCH} != x86_64 ]]; then
