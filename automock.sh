@@ -44,7 +44,7 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   # Reset HEAD to sha in ${2}
   git reset --hard "${COMMIT}"
   # Read full link to spec file
-  FILE=`readlink -f "${REPO}/*.spec")`
+  FILE=`readlink -f "${REPO}"/*.spec`
   # Create src dir (temporary)
   mkdir -p "${REPO}"/SOURCES/
   # Move sources to separate dir
@@ -60,7 +60,7 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   # Edit mock configs
   for ARCH in {i386,x86_64}
   do
-    echo "`echo "${REPO}"; cat "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg`" > "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg 
+    echo "`echo "config_opts['basedir']='${REPO}'"; cat "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg`" > "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg 
     sed -i -e "${LINE} s/^/config_opts['macros']['%dist']='.${DIST}.${POSTFIX}'\n/" "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg
   done
   # Build SRPM
