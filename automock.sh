@@ -94,6 +94,7 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   build_clean "x86_64"
   build_clean "i386"
   sudo rm -rf "${REPO}"/build/
+  update
 elif [[ ${1} = clean ]]; then
   # Clean
   sudo rm -rf "${REPODIR}"/*
