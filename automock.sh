@@ -19,7 +19,7 @@ function repo
 function build_clean
 {
   # Build RPMs for x86_64
-  setarch ${2} mock --no-cleanup-after -r ../../${REPO}/fedora-${FEDVER}-${1} --rebuild --resultdir=${REPO}/build/${1}/ ${REPO}/build/source/*.src.rpm
+  setarch ${2} mock --no-cleanup-after -r ../../"${REPO}"/fedora-${FEDVER}-${1} --rebuild --resultdir=${REPO}/build/${1}/ ${REPO}/build/source/*.src.rpm
   # Delete temp mock files and SRPMs from ${1} repo
   find ${REPO}/build/${1}/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
   updateselinux
@@ -64,7 +64,7 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
     sed -i -e "${LINE} s/^/config_opts['macros']['%dist']='.${DIST}.${POSTFIX}'\n/" "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg
   done
   # Build SRPM
-  mock --no-cleanup-after -r ../../fedora-${FEDVER}-${MAINARCH} --buildsrpm --resultdir="${REPO}"/build/source/ --spec "${FILE}" --source "${REPO}"/SOURCES/
+  mock --no-cleanup-after -r ../../"${REPO}"/fedora-${FEDVER}-${MAINARCH} --buildsrpm --resultdir="${REPO}"/build/source/ --spec "${FILE}" --source "${REPO}"/SOURCES/
   # Move sources from separate dir
   mv "${REPO}"/SOURCES/* "${REPO}"/
   # Remove temp separate dir for sources
