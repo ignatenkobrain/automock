@@ -59,6 +59,8 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   FEDVER="${BRANCH:1}"
   # Initializate REPO variable at date
   REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`-${REPONAME}-fc${FEDVER}"
+  # Touch dir
+  mkdir -p "${REPO}"/
   # Copy original mock files
   cp /etc/mock/fedora-${FEDVER}-{i386,x86_64}.cfg "${REPO}"/
   # Postfix for dist
