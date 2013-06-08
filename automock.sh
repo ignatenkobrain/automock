@@ -25,7 +25,7 @@ repo()
 build_clean()
 {
   # Build RPMs for x86_64
-  mock -r ../.."${REPO}"/fedora-${FEDVER}-${1} --arch=${2} --rebuild --resultdir=${REPO}/build/${1}/ ${REPO}/build/source/*.src.rpm
+  mock -r ../.."${REPO}"/fedora-${FEDVER}-${1} --rebuild --resultdir=${REPO}/build/${1}/ ${REPO}/build/source/*.src.rpm
   # Delete temp mock files and SRPMs from ${1} repo
   find ${REPO}/build/${1}/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f 
   updateselinux
@@ -76,9 +76,8 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   # Delete temp mock files and SRPMs from source repo
   find "${REPO}"/build/source/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   updateselinux
-  build_clean "x86_64" "x86_64"
-  build_clean "x86_64" "i386"
-  build_clean "i386" "i386"
+  build_clean "x86_64"
+  build_clean "i386"
   chown -R nginx:nginx "${REPODIR}"
 elif [[ ${1} = clean ]]; then
   # Clean
