@@ -81,7 +81,6 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   updateselinux
   build_clean "x86_64"
   build_clean "i386"
-  chown -R nginx:nginx "${REPODIR}"
 elif [[ ${1} = clean ]]; then
   # Clean
   rm -rf "${REPODIR}"/*
@@ -92,3 +91,4 @@ elif [[ ${1} = clean ]]; then
 elif [[ ${1} = update ]]; then
   updateselinux
 fi
+chown -R nginx:nginx "${REPODIR}"
