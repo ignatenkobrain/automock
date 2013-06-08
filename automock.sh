@@ -41,7 +41,7 @@ repo ()
 build_clean ()
 {
   # Build RPMs for x86_64
-  mock -r ../.."${REPO}"/fedora-${FEDVER}-${1} --scm-enable --resultdir="${REPO}"/${1}/
+  mock -r ../.."${REPO}"/fedora-${FEDVER}-${1} --scm-enable --resultdir="${REPO}"/${1}/ --verbose
   # Delete temp mock files and SRPMs from ${1} repo
   #find ${REPO}/${1}/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' | xargs rm -f 
   updateselinux
