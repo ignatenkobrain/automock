@@ -52,7 +52,7 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   REPONAME="${REPONAME%.*}"
   # Git url
   GIT="${1#git://}"
-  GIT="${GIT%.git?*}"
+  GIT="${GIT%/*}"
   # Cutting branch ( also fedora version )
   BRANCH="${1##*.git?}"
   # Initializate Fedora version
