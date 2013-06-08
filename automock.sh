@@ -19,6 +19,12 @@ if [[ ${MAINARCH} != x86_64 ]]; then
   echo "For build need x86_64"
   exit 1
 fi
+update ()
+{
+  # Create repodata
+  repo "${REPODIR}"/fc{18,19}/
+  updateselinux
+}
 updateselinux ()
 {
   SELINUXSTATUS=`sestatus | grep "SELinux status" | awk '{print($3)}'`
@@ -42,9 +48,6 @@ build_clean ()
 {
   # Build RPMs for x86_64
   mock -r ../../"${REPO}"/fedora-${FEDVER}-${1} --scm-enable --resultdir="${REPO}"/${1}/ --verbose
-  # Delete temp mock files and SRPMs from ${1} repo
-  #find ${REPO}/${1}/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' | xargs rm -f 
-  updateselinux
 }
 if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   # Cutting reponame
@@ -88,18 +91,16 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
            echo "config_opts['cache_topdir'] = '${REPO}/build/cache/'"; \
            cat "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg`" > "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg
   done
-  updateselinux
   build_clean "x86_64"
   build_clean "i386"
   sudo rm -rf "${REPO}"/build/
 elif [[ ${1} = clean ]]; then
   # Clean
-  rm -rf "${REPODIR}"/*
+  sudo rm -rf "${REPODIR}"/*
   # Create repodirs
   mkdir -p "${REPODIR}"/fc{18,19}/
-  # Create repodata
-  repo "${REPODIR}"/fc{18,19}/
+  update
 elif [[ ${1} = update ]]; then
-  updateselinux
+  update
 fi
 chown -R `whoami`:nginx "${REPODIR}"
