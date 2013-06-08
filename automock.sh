@@ -1,5 +1,5 @@
 #!/bin/bash
-REPODIR="/home/build/"
+REPODIR="/home/repos/build/"
 # Get arch
 MAINARCH=`arch`
 if [[ ${MAINARCH} != x86_64 ]]; then
@@ -10,12 +10,12 @@ function updateselinux
 {
   SELINUXSTATUS=`sestatus | grep "SELinux status" | awk '{print($3)}'`
   SELINUXHOMEDIRSSTATUS=`getsebool httpd_enable_homedirs | awk '{print($3)}'`
-  if [[ $SELINUXSTATUS = enabled ]]; then
-    if [[ $REPODIR = /home/* && $SELINUXHOMEDIRSSTATUS = off ]]; then
+  if [[ ${SELINUXSTATUS} = enabled ]]; then
+    if [[ "${REPODIR}" = /home/* && ${SELINUXHOMEDIRSSTATUS} = off ]]; then
       sudo setsebool -P httpd_enable_homedirs 1
     fi
-    sudo semanage fcontext -a -t public_content_t "$REPODIR(/.*)?"
-    sudo restorecon -F -R -v $REPODIR
+    sudo semanage fcontext -a -t public_content_t "${REPODIR}(/.*)?"
+    sudo restorecon -F -R -v "${REPODIR}"
   fi
 }
 function repo
