@@ -1,4 +1,16 @@
 #!/bin/bash
+#################
+#Requirements:  #
+#               #
+#x86_64 OS      #
+#mock           #
+#rpmlint        #
+#createrepo     #
+#git            #
+#sed            #
+#awk            #
+#################
+
 REPODIR="/home/repos/build"
 # Get arch
 MAINARCH=`arch`
@@ -52,6 +64,12 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   git reset --hard "${COMMIT}"
   # Read full link to spec file
   FILE=`readlink -f "${REPO}"/*.spec`
+  # Verify spec file
+  rpmlint "${FILE}"
+  if [[ "$?" -ne 0 ]]; then
+    echo "Error in spec!"
+    exit 1
+  fi
   # Create src dir (temporary)
   mkdir -p "${REPO}"/SOURCES/
   # Move sources to separate dir
