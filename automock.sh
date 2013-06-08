@@ -6,7 +6,7 @@ if [[ ${MAINARCH} != x86_64 ]]; then
   echo "For build need x86_64"
   exit 1
 fi
-updateselinux()
+updateselinux ()
 {
   SELINUXSTATUS=`sestatus | grep "SELinux status" | awk '{print($3)}'`
   SELINUXHOMEDIRSSTATUS=`getsebool httpd_enable_homedirs | awk '{print($3)}'`
@@ -18,11 +18,14 @@ updateselinux()
     sudo restorecon -F -R -v "${REPODIR}"
   fi
 }
-repo()
+repo ()
 {
-  createrepo --update $@
+  for REPOSITORY in "$@"
+  do
+    createrepo --update ${REPOSITORY}
+  done
 }
-build_clean()
+build_clean ()
 {
   # Build RPMs for x86_64
   mock -r ../.."${REPO}"/fedora-${FEDVER}-${1} --rebuild --resultdir=${REPO}/build/${1}/ ${REPO}/build/source/*.src.rpm
