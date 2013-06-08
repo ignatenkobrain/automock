@@ -6,7 +6,7 @@ if [[ ${MAINARCH} != x86_64 ]]; then
   echo "For build need x86_64"
   exit 1
 fi
-function updateselinux
+updateselinux()
 {
   SELINUXSTATUS=`sestatus | grep "SELinux status" | awk '{print($3)}'`
   SELINUXHOMEDIRSSTATUS=`getsebool httpd_enable_homedirs | awk '{print($3)}'`
@@ -18,16 +18,16 @@ function updateselinux
     sudo restorecon -F -R -v "${REPODIR}"
   fi
 }
-function repo
+repo()
 {
   createrepo --update $@
 }
-function build_clean
+build_clean()
 {
   # Build RPMs for x86_64
   mock -r ../.."${REPO}"/fedora-${FEDVER}-${1} --arch=${2} --rebuild --resultdir=${REPO}/build/${1}/ ${REPO}/build/source/*.src.rpm
   # Delete temp mock files and SRPMs from ${1} repo
-  find ${REPO}/build/${1}/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f
+  find ${REPO}/build/${1}/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f 
   updateselinux
 }
 if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
@@ -79,6 +79,7 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   build_clean "x86_64" "x86_64"
   build_clean "x86_64" "i386"
   build_clean "i386" "i386"
+  chown -R nginx:nginx "${REPODIR}"
 elif [[ ${1} = clean ]]; then
   # Clean
   rm -rf "${REPODIR}"/*
