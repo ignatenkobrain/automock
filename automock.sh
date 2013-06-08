@@ -4,6 +4,7 @@
 #               #
 #x86_64 OS      #
 #mock           #
+#mock-scm       #
 #rpmlint        #
 #createrepo     #
 #git            #
@@ -40,40 +41,24 @@ repo ()
 build_clean ()
 {
   # Build RPMs for x86_64
-  mock -r ../.."${REPO}"/fedora-${FEDVER}-${1} --rebuild --resultdir=${REPO}/build/${1}/ ${REPO}/build/source/*.src.rpm
+  mock -r ../.."${REPO}"/fedora-${FEDVER}-${1} --scm-enable --resultdir="${REPO}"/${1}/
   # Delete temp mock files and SRPMs from ${1} repo
-  find ${REPO}/build/${1}/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -o -name '*.src.rpm' | xargs rm -f 
+  #find ${REPO}/${1}/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' | xargs rm -f 
   updateselinux
 }
-if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
+if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   # Cutting reponame
   REPONAME="${1##git:*/}"
   REPONAME="${REPONAME%.*}"
-  # Cutting commit
-  COMMIT="${1:(-40)}"
-  # Initializate version Fedora
-  FEDVER="${2}"
+  # Git url
+  GIT="${1#git://}"
+  GIT="${GIT%.git?*}"
+  # Cutting branch ( also fedora version )
+  BRANCH="${1##*.git?}"
+  # Initializate Fedora version
+  FEDVER="${BRANCH:1}"
   # Initializate REPO variable at date
   REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`-${REPONAME}-fc${FEDVER}"
-  # Cloning git repo
-  git clone "${1%?#*}" "${REPO}"
-  # Initializate git dirs
-  export GIT_WORK_TREE="${REPO}"
-  export GIT_DIR="${GIT_WORK_TREE}/.git"
-  # Reset HEAD to sha in ${2}
-  git reset --hard "${COMMIT}"
-  # Read full link to spec file
-  FILE=`readlink -f "${REPO}"/*.spec`
-  # Verify spec file
-  rpmlint "${FILE}"
-  if [[ "$?" -ne 0 ]]; then
-    echo "Error in spec!"
-    exit 1
-  fi
-  # Create src dir (temporary)
-  mkdir -p "${REPO}"/SOURCES/
-  # Move sources to separate dir
-  find "${REPO}" -maxdepth 1 -type f -regextype "posix-extended" -not -regex '.*\.spec|.*\/README.md' -exec mv -f {} "${REPO}"/SOURCES/ \;
   # Copy original mock files
   cp /etc/mock/fedora-${FEDVER}-{i386,x86_64}.cfg "${REPO}"/
   # Postfix for dist
@@ -85,17 +70,22 @@ if [[ ${1} =~ ^git://.*\.git\?#[a-z0-9]{40}$ && ${2} = 1[89] ]]; then
   # Edit mock configs
   for ARCH in {i386,x86_64}
   do
-    echo "`echo "config_opts['basedir']='${REPO}'"; cat "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg`" > "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg 
     sed -i -e "${LINE} s/^/config_opts['macros']['%dist']='.${DIST}.${POSTFIX}'\n/" "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg
+    echo "`echo "config_opts['scm'] = True"; \
+           echo "config_opts['scm_opts']['method'] = 'git'"; \
+           echo "#config_opts['scm_opts']['cvs_get'] = 'cvs -d /srv/cvs co SCM_BRN SCM_PKG'"; \
+           echo "config_opts['scm_opts']['git_get'] = 'git clone SCM_BRN git://${GIT}/SCM_PKG.git SCM_PKG'"; \
+           echo "#config_opts['scm_opts']['svn_get'] = 'svn co file:///srv/svn/SCM_PKG/SCM_BRN SCM_PKG'"; \
+           echo "config_opts['scm_opts']['spec'] = 'SCM_PKG.spec'"; \
+           echo "config_opts['scm_opts']['ext_src_dir'] = '/dev/null'"; \
+           echo "config_opts['scm_opts']['write_tar'] = True"; \
+           echo "config_opts['scm_opts']['git_timestamps'] = True"; \
+           echo "config_opts['scm_opts']['package'] = '${REPONAME}'"; \
+           echo "config_opts['scm_opts']['branch'] = '${BRANCH}'"; \
+           echo "config_opts['basedir']='${REPO}/build/basedir/'"; \
+           echo "config_opts['cache_topdir'] = '${REPO}/build/cache/'"; \
+           cat "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg`" > "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg
   done
-  # Build SRPM
-  mock -r ../.."${REPO}"/fedora-${FEDVER}-${MAINARCH} --buildsrpm --resultdir="${REPO}"/build/source/ --spec "${FILE}" --source "${REPO}"/SOURCES/
-  # Move sources from separate dir
-  mv "${REPO}"/SOURCES/* "${REPO}"/
-  # Remove temp separate dir for sources
-  rm -rf "${REPO}"/SOURCES/
-  # Delete temp mock files and SRPMs from source repo
-  find "${REPO}"/build/source/ -type f -regextype "posix-extended" -not -regex '.*\.(rpm|log)' -delete
   updateselinux
   build_clean "x86_64"
   build_clean "i386"
