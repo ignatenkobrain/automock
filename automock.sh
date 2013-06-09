@@ -45,7 +45,7 @@ repo ()
 build_clean ()
 {
   # Build RPMs for x86_64
-  mock -r ../../"${REPO}"/fedora-${FEDVER}-${1} --scm-enable --resultdir="${REPO}"/${1}/ --verbose
+  mock -r ../../"${REPO}"/fedora-${FEDVER}-${1} --rebuild --resultdir="${REPO}"/${1}/ "${REPO}"/source/*.src.rpm --verbose >"${REPO}"/source/mock.log 2>&1
 }
 if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   # Cutting reponame
@@ -74,7 +74,7 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   for ARCH in {i386,x86_64}
   do
     sed -i -e "${LINE} s/^/config_opts['macros']['%dist']='.${DIST}.${POSTFIX}'\n/" "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg
-    echo "`echo "config_opts['scm'] = True"; \
+    echo "`echo "config_opts['scm'] = False"; \
            echo "config_opts['scm_opts']['method'] = 'git'"; \
            echo "#config_opts['scm_opts']['cvs_get'] = 'cvs -d /srv/cvs co SCM_BRN SCM_PKG'"; \
            echo "config_opts['scm_opts']['git_get'] = 'git clone SCM_BRN git://${GIT}/SCM_PKG.git SCM_PKG'"; \
@@ -89,8 +89,15 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
            echo "config_opts['cache_topdir'] = '${REPO}/build/cache/'"; \
            cat "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg`" > "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg
   done
-  build_clean "x86_64"
-  build_clean "i386"
+  mock -r ../../"${REPO}"/fedora-${FEDVER}-${1} --buildsrpm --scm-enable --resultdir="${REPO}"/source/ --verbose >"${REPO}"/source/mock.log 2>&1
+  if [[ $? -eq 0 ]]; then
+    build_clean "x86_64"
+    build_clean "i386"
+  else
+    echo "Failed!"
+    echo "See mock.log"
+    exit 1
+  fi
   sudo rm -rf "${REPO}"/build/
   update
 elif [[ ${1} = clean ]]; then
