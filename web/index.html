@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  
+  <head>
+    <title>Automock Control panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <link rel="stylesheet" href="https://app.divshot.com/css/bootstrap.css">
+    <link rel="stylesheet" href="https://app.divshot.com/css/bootstrap-responsive.css">
+    <link rel="stylesheet" href="https://djyhxgczejc94.cloudfront.net/builds/80037b02082b29f5f9cea127cab2a4ba4365ec67.css">
+    <script src="https://app.divshot.com/js/jquery.min.js"></script>
+    <script src="https://app.divshot.com/js/bootstrap.min.js"></script>
+  </head>
+  
+  <body>
+    <div class="container">
+      <h1 class="page-header">Automock Control panel
+        <br> 
+      </h1>
+      <h1></h1>
+      <h3 style="" class="pull-left">
+        <br> 
+      </h3>
+      <ul class="nav nav-tabs">
+        <li class="active">
+          <a href="./index.html">Upload</a> 
+        </li>
+        <li>
+          <a href="./builds.php">Builds</a> 
+        </li>
+      </ul>
+      <form>
+        <span class="help-block">Select your public key file (it WILL NOT be uploaded anywhere):</span>
+        <div class="input-append">
+          <input class="input-large" type="text">
+          <button class="btn" type="button">Select</button>
+        </div>
+        <span></span>
+        <span class="help-block">Input git repository:<br></span>
+        <span></span>
+        <span class="help-inline">git://</span>
+        <div class="input-append">
+          <input class="input-xxlarge" type="text"> 
+        </div>
+        <span class="help-inline">.git</span>
+        <span class="help-block">Select git branch (also Fedora version):</span>
+        <select>
+          <option>f18 (Fedora 18)</option>
+          <option>f19 (Fedora 19)</option>
+        </select>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </div>
+      </form>
+    </div>
+  </body>
+
+</html>
