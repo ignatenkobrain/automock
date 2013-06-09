@@ -111,7 +111,7 @@ elif [[ ${1} = clean ]]; then
 elif [[ ${1} = update ]]; then
   update
 fi
-sudo chown -R nginx:nginx "${REPO}"/
+sudo chown -R nginx:nginx "${REPODIR}"/
 if [[ $EXIT -ne 0 ]]; then
   exit $EXIT
 else
