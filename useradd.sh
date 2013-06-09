@@ -3,7 +3,7 @@ if [[ `whoami` = root ]]; then
   USER="automock"
   useradd -G nginx,mock -s /bin/bash ${USER}
   mkdir /home/${USER}/.ssh/
-  touch /home/${USER}/.ssh/authorized_keys
+  cp ./authorized_keys /home/${USER}/.ssh/
   chown -R ${USER}:${USER} /home/${USER}/.ssh/
   chmod 700 /home/${USER}/.ssh/
   chmod 600 /home/${USER}/.ssh/authorized_keys
