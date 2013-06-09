@@ -20,24 +20,15 @@ $ /path/to/automock.sh clean
 Update local repository:
 $ /path/to/automock.sh update
 Build package from git:
-$ /path/to/automock.sh git://git_url/name.git?#hash version_of_fedora
-Example to build libfprint to Fedora 19:
-$ /home/repos/automock/automock.sh git://github.com/ignatenkobrain/libfprint.git?#830dc01abb45162e429bef59dc8a4c85a42be4ea 19
+$ /path/to/automock.sh git://git_url/name.git?f${version_of_fedora}
+Example to build libfprint to Fedora 19 from f19 branch:
+$ /home/repos/automock/automock.sh git://github.com/ignatenkobrain/libfprint.git?f19
 
 How to use automock from ssh:
 
 Clean local repository:
-ssh -p 2222 ignatenkobrain.asuscomm.com "automock.sh clean"
+ssh -p 2222 -l automock ignatenkobrain.asuscomm.com "automock.sh clean"
 Update local repository:
-ssh -p 2222 ignatenkobrain.asuscomm.com "automock.sh update"
+ssh -p 2222 -l automock ignatenkobrain.asuscomm.com "automock.sh update"
 Example to build libfprint to Fedora 19:
-ssh -p 2222 ignatenkobrain.asuscomm.com "automock.sh git://github.com/ignatenkobrain/libfprint.git?#830dc01abb45162e429bef59dc8a4c85a42be4ea 19"
-
-Adding user:
-
-# useradd -G nginx,mock -s /bin/bash build
-# mkdir /home/build/.ssh/
-# touch /home/build/.ssh/authorized_keys
-# chown -R build:build /home/build/.ssh/
-# chmod 700 /home/build/.ssh/
-# chmod 600 /home/build/.ssh/authorized_keys
+ssh -p 2222 -l automock ignatenkobrain.asuscomm.com "automock.sh git://github.com/ignatenkobrain/libfprint.git?f19"
