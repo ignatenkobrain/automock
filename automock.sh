@@ -96,7 +96,7 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   else
     echo "Failed!"
     echo "See mock.log"
-    exit 1
+    return 1
   fi
   sudo rm -rf "${REPO}"/build/
   update
