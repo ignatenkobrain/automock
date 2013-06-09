@@ -5,11 +5,12 @@
     <title>Automock Control panel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
-    <link rel="stylesheet" href="https://app.divshot.com/css/bootstrap.css">
-    <link rel="stylesheet" href="https://app.divshot.com/css/bootstrap-responsive.css">
-    <link rel="stylesheet" href="https://djyhxgczejc94.cloudfront.net/builds/80037b02082b29f5f9cea127cab2a4ba4365ec67.css">
-    <script src="https://app.divshot.com/js/jquery.min.js"></script>
-    <script src="https://app.divshot.com/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="./js/bootstrap.css">
+    <link rel="stylesheet" href="./js/bootstrap-responsive.css">
+    <link rel="stylesheet" href="./js/sheet.css">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/automock.js"></script>
   </head>
   
   <body>
@@ -29,27 +30,35 @@
           <a href="./builds.php">Builds</a> 
         </li>
       </ul>
-      <form>
-        <span class="help-block">Select your public key file (it WILL NOT be uploaded anywhere):</span>
+      <form method="POST" enctype="multipart/form-data">
+        <div id="err_auth" class="alert alert-error" style="display: none;">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <b>Error!</b> Authorization required.
+        </div>
+        <div id="err_server" class="alert alert-error" style="display: none;">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <b>Error!</b> Something went wrong.
+        </div>
+        <div id="err_api" class="alert alert-error">
+          <b>Error!</b> File API or JS is not supported, upload is not possible. Update your browser.
+        </div>
+        <span class="help-block">Select your public key file (it WILL NOT be uploaded anywhere, request is signed using JS):</span>
         <div class="input-append">
-          <input class="input-large" type="text">
-          <button class="btn" type="button">Select</button>
+          <input class="input-large" type="file" id="rsa_key">
         </div>
         <span></span>
-        <span class="help-block">Input git repository:<br></span>
+        <span class="help-block">Input git repository (git://):<br></span>
         <span></span>
-        <span class="help-inline">git://</span>
         <div class="input-append">
-          <input class="input-xxlarge" type="text"> 
+          <input class="input-xxlarge" type="text" name="repo"> 
         </div>
-        <span class="help-inline">.git</span>
         <span class="help-block">Select git branch (also Fedora version):</span>
-        <select>
-          <option>f18 (Fedora 18)</option>
-          <option>f19 (Fedora 19)</option>
+        <select name="branch">
+          <option value="fc18">f18 (Fedora 18)</option>
+          <option value="fc19">f19 (Fedora 19)</option>
         </select>
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Upload</button>
+          <button id="btn_submit" type="button" class="btn btn-primary" disabled>Build</button>
         </div>
       </form>
     </div>
