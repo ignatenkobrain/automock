@@ -3,11 +3,9 @@
 #Requirements:  #
 #               #
 #x86_64 OS      #
-#mock           #
 #mock-scm       #
 #rpmlint        #
 #createrepo     #
-#git            #
 #sed            #
 #awk            #
 #################
