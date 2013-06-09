@@ -1,6 +1,6 @@
 #!/bin/bash
+source automock.conf
 if [[ `whoami` = root ]]; then
-  USER="automock"
   useradd -G nginx,mock -s /bin/bash ${USER}
   mkdir /home/${USER}/.ssh/
   cp ./authorized_keys /home/${USER}/.ssh/

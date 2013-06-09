@@ -1,6 +1,6 @@
 #!/bin/bash
+source automock.conf
 if [[ `whoami` = root ]]; then
-  USER="automock"
   cp /etc/sudoers /home/${USER}/sudoers
   echo "Defaults:automock !requiretty" >> /etc/sudoers
   echo "automock ALL=(ALL) NOPASSWD: /usr/sbin/semanage, /usr/sbin/restorecon, /usr/sbin/setsebool, /usr/bin/rm, /usr/bin/chown" >> /etc/sudoers
