@@ -6,11 +6,7 @@ if [[ ${MAINARCH} = x86_64 ]]; then
     # Move task in running
     mv "${NEWTASK}" "${JOBS}"/running/
     # Start build task
-    ./automock.sh "`cat "${JOBS}"/running/*.task`"
-    # Delete complete task
-    rm -f	"${JOBS}"/running/*.task
-    # Start script again (monitoring)
-    `readlink -f $0`
+    nohup setsid ./automock.sh "`cat "${JOBS}"/running/*.task`"
   fi
   exit 0
 else
