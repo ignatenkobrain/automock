@@ -8,8 +8,10 @@
 #createrepo     #
 #sed            #
 #awk            #
+#sudo           #
 #################
-
+# Exit status
+EXIT=0
 REPODIR="/home/repos/build"
 # Get arch
 MAINARCH=`arch`
@@ -96,7 +98,7 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   else
     echo "Failed!"
     echo "See mock.log"
-    return 1
+    EXIT=1
   fi
   sudo rm -rf "${REPO}"/build/
   update
@@ -109,4 +111,9 @@ elif [[ ${1} = clean ]]; then
 elif [[ ${1} = update ]]; then
   update
 fi
-chown -R `whoami`:nginx "${REPODIR}"
+sudo chown -R nginx:nginx "${REPO}"/
+if [[ $EXIT -ne 0 ]]; then
+  exit $EXIT
+else
+  exit 0
+fi
