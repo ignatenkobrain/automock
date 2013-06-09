@@ -98,17 +98,6 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
     STATUS=1
   fi
   sudo rm -rf "${REPO}"/build/
-  update
-elif [[ ${1} = init ]]; then
-  # Clean
-  sudo rm -rf "${REPODIR}"/*
-  # Create repodirs
-  #mkdir -p "${REPODIR}"/fc{18,19}/
-  # Create jobs
-  mkdir -p "${JOBS}" "${JOBS}"/running/ "${JOBS}"/pending/
-  update
-elif [[ ${1} = update ]]; then
-  update
+  sudo chown -R nginx:nginx "${REPODIR}"/
 fi
-sudo chown -R nginx:nginx "${REPODIR}"/
 exit $STATUS
