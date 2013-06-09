@@ -32,12 +32,10 @@
       </ul>
       <form method="POST" enctype="multipart/form-data">
         <div id="err_auth" class="alert alert-error" style="display: none;">
-          <button type="button" class="close" data-dismiss="alert">×</button>
           <b>Error!</b> Authorization required.
         </div>
-        <div id="err_server" class="alert alert-error" style="display: none;">
-          <button type="button" class="close" data-dismiss="alert">×</button>
-          <b>Error!</b> Something went wrong.
+        <div id="err_read" class="alert alert-error" style="display: none;">
+          <b>Error!</b> Failed to read key file.
         </div>
         <div id="err_api" class="alert alert-error">
           <b>Error!</b> File API or JS is not supported, upload is not possible. Update your browser.
