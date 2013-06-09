@@ -60,8 +60,8 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   FEDVER="${BRANCH:1}"
   # Initializate REPO variable at date
   REPO="${REPODIR}/`date +"%d.%m.%Y-%H:%M:%S"`-${REPONAME}-fc${FEDVER}"
-  # Touch dir
-  mkdir -p "${REPO}"/
+  # Touch directories
+  mkdir -p "${REPO}"/ "${REPO}"/source/ "${REPO}"/build/
   # Copy original mock files
   cp /etc/mock/fedora-${FEDVER}-{i386,x86_64}.cfg "${REPO}"/
   # Postfix for dist
@@ -89,7 +89,7 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
            echo "config_opts['cache_topdir'] = '${REPO}/build/cache/'"; \
            cat "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg`" > "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg
   done
-  mock -r ../../"${REPO}"/fedora-${FEDVER}-${1} --buildsrpm --scm-enable --resultdir="${REPO}"/source/ --verbose >"${REPO}"/source/mock.log 2>&1
+  mock -r ../../"${REPO}"/fedora-${FEDVER}-${MAINARCH} --buildsrpm --scm-enable --resultdir="${REPO}"/source/ --verbose >"${REPO}"/source/mock.log 2>&1
   if [[ $? -eq 0 ]]; then
     build_clean "x86_64"
     build_clean "i386"
