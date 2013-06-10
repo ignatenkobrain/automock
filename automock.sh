@@ -60,7 +60,7 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   # Initializate REPO variable at date
   REPO="${REPODIR}"/"${TIMESTAMP}"-${REPONAME}-fc${FEDVER}
   # Touch directories
-  mkdir -p "${REPO}"/ "${REPO}"/source/ "${REPO}"/build/
+  mkdir -p "${REPO}"/ "${REPO}"/source/ "${REPO}"/build/ "${REPO}"/x86_64/ "${REPO}"/i386/
   # Copy original mock files
   cp /etc/mock/fedora-${FEDVER}-{i386,x86_64}.cfg "${REPO}"/
   # Postfix for dist
@@ -100,5 +100,5 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   sudo rm -rf "${REPO}"/build/
 fi
 # Delete complete task
-rm -f "${TMPJOBSRUN}"/*.task
+sudo rm -f "${TMPJOBSRUN}"/*.task
 exit $STATUS
