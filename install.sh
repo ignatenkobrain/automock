@@ -21,8 +21,16 @@ httpd ()
   backup "/etc/httpd/conf.d/welcome.conf"
   echo "DocumentRoot ${ROOT} 
 Alias /repos ${REPODIR}/packages
+Alias /automock ${DIR}/web
 <Directory "${ROOT}">
   Options Indexes
+  AllowOverride None
+  Require all granted
+  Order allow,deny
+  Allow from all
+</Directory>
+<Directory "${DIR}">
+  Options -Indexes
   AllowOverride None
   Require all granted
   Order allow,deny
@@ -51,6 +59,9 @@ if [[ `whoami` = root ]]; then
   httpd
   init
   crontab -u apache cron
+  systemctl enable httpd.service
+  systemctl restart httpd.service
+  cp -R * "${DIR}"
   exit 0
 else
   echo "Failed! Run as root!"
