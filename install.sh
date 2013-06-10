@@ -42,7 +42,7 @@ init ()
   # Clean
   rm -rf "${REPODIR}"/*
   # Create repodirs
-  mkdir -m 770-p "${REPODIR}"/packages/f{18,19}/
+  mkdir -m 770 -p "${REPODIR}"/packages/f{18,19}/
   # Create jobs directories
   mkdir -m 770 -p "${JOBS}"/ "${JOBS}"/pending/ "${TMPJOBSRUN}"/
   # Chown
