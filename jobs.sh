@@ -1,6 +1,16 @@
 #!/bin/bash
 source automock.conf
+verifydir ()
+{
+  if [ ! -d "${1}"/ ]; then
+    mkdir -p "${1}"/
+  fi
+}
+
 if [[ ${MAINARCH} = x86_64 ]]; then
+  verifydir "${TMPJOBSRUN}"
+  verifydir "${JOBS}"
+  verifydir "${JOBS}"/pending
   if [[ `ls "${TMPJOBSRUN}"/*.task | wc -l` -lt ${MAXTASKS} ]]; then
     NEWTASK=`ls -t "${JOBS}"/pending/*.task | head -n1`
     # Move task in running
