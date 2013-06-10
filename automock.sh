@@ -98,7 +98,7 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
     STATUS=1
   fi
   sudo rm -rf "${REPO}"/build/
-  sudo chown -R nginx:nginx "${REPODIR}"/
+  sudo chown -R apache:apache "${REPODIR}"/
 fi
 # Delete complete task
 rm -f "${JOBS}"/running/*.task
