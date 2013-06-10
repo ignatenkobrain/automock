@@ -14,7 +14,7 @@ source automock.conf
 update ()
 {
   # Create repodata
-  repo "${REPODIR}"/fc{18,19}/
+  repo "${REPODIR}"/packages/fc{18,19}/
   updateselinux
 }
 updateselinux ()
