@@ -71,7 +71,7 @@ if [[ `whoami` = root ]]; then
     rm -f /etc/httpd/conf.d/automock.conf
     crontab -u apache -r
     userdel -r ${USER}
-    rm -rf "${ROOT}"/
+    rm -rf "${ROOT}"/*
     rm -rf "${DIR}"/
   fi
   exit 0
