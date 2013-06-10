@@ -64,7 +64,7 @@ else
   STATUS=1
 fi
 # Clean orphaned files
-#sudo rm -rf "${REPO}"/build/ "${REPO}"/conf/
+sudo rm -rf "${REPO}"/build/ "${REPO}"/conf/
 # Delete complete task
 rm -f "${TMPJOBSRUN}"/*.task
 exit $STATUS
