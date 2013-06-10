@@ -2,7 +2,7 @@
 source automock.conf
 verifydir ()
 {
-  if [ ! -d "${1}"/ ]; then
+  if [[ ! -d "${1}"/ ]]; then
     mkdir -p "${1}"/
   fi
 }
@@ -13,7 +13,9 @@ if [[ ${MAINARCH} = x86_64 ]]; then
   verifydir "${JOBS}"/pending
   if [[ `ls "${TMPJOBSRUN}"/*.task | wc -l` -lt ${MAXTASKS} ]]; then
     NEWTASK=`ls -t "${JOBS}"/pending/*.task | head -n1`
-    echo ${NEWTASK}
+    if [[ -z "${NEWTASK}" ]]; then
+      exit 0
+    fi
     # Move task in running
     mv "${NEWTASK}" "${TMPJOBSRUN}"/
     # Start build task
