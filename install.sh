@@ -52,7 +52,10 @@ if [[ `whoami` = root ]]; then
   # Install requirements
   yum install -y mock-scm sudo createrepo sed gawk httpd php
   # Make primary dir
-  mkdir "${DIR}" "${DIR}"/backups/
+  mkdir "${DIR}"/
+  cp -R * "${DIR}"/
+  chown -R apache:apache "${DIR}"/
+  mkdir -m 750 "${DIR}"/backups/
   # Create user for build
   useradd -M -g ${GROUP} -G mock -s /bin/false ${USER}
   sudoers
@@ -61,7 +64,6 @@ if [[ `whoami` = root ]]; then
   crontab -u apache cron
   systemctl enable httpd.service
   systemctl restart httpd.service
-  cp -R * "${DIR}"
   exit 0
 else
   echo "Failed! Run as root!"
