@@ -3,7 +3,7 @@ source /home/repos/automock/automock.conf
 verifydir ()
 {
   if [[ ! -d "${1}"/ ]]; then
-    mkdir -p "${1}"/
+    mkdir -m 660 -p "${1}"/
   fi
 }
 
