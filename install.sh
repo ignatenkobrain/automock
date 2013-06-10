@@ -44,7 +44,7 @@ init ()
   # Create repodirs
   mkdir -p "${REPODIR}"/packages/f{18,19}/
   # Create jobs directories
-  mkdir -p "${JOBS}"/ "${JOBS}"/running/ "${TMPJOBSRUN}"/
+  mkdir -p "${JOBS}"/ "${JOBS}"/pending/ "${TMPJOBSRUN}"/
   # Chown
   chown -R ${USER}:${GROUP} "${ROOT}"/
 }
@@ -71,7 +71,7 @@ if [[ `whoami` = root ]]; then
     rm -f /etc/httpd/conf.d/automock.conf
     crontab -u apache -r
     userdel -r ${USER}
-    rm -rf "${ROOT}"/*
+    rm -rf "${ROOT}"/build/
     rm -rf "${DIR}"/
   fi
   exit 0
