@@ -56,7 +56,7 @@ if [[ `whoami` = root ]]; then
     yum install -y mock-scm sudo createrepo sed gawk httpd php
     # Make primary dir
     mkdir "${DIR}"/
-    cp -R * "${DIR}"/
+    cp -pR * "${DIR}"/
     chown -R apache:apache "${DIR}"/
     mkdir -m 750 "${DIR}"/backups/
     # Create user for build
