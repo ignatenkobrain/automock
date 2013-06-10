@@ -38,7 +38,7 @@ repo ()
     createrepo --update ${REPOSITORY}
   done
 }
-build_clean ()
+build ()
 {
   # Build RPMs for x86_64
   mock -r ../../"${REPO}"/fedora-${FEDVER}-${1} --rebuild --resultdir="${REPO}"/${1}/ "${REPO}"/source/*.src.rpm --verbose >"${REPO}"/${1}/mock.log 2>&1
@@ -92,8 +92,8 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   done
   mock -r ../../"${REPO}"/fedora-${FEDVER}-${MAINARCH} --buildsrpm --scm-enable --resultdir="${REPO}"/source/ --verbose >"${REPO}"/source/mock.log 2>&1
   if [[ $? -eq 0 ]]; then
-    build_clean "x86_64"
-    build_clean "i386"
+    build "x86_64"
+    build "i386"
   else
     echo "Failed!"
     echo "See mock.log"
@@ -103,5 +103,5 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
   sudo rm -rf "${REPO}"/build/ "${REPO}"/fedora-${FEDVER}-{i386,x86_64}.cfg
 fi
 # Delete complete task
-sudo rm -f "${TMPJOBSRUN}"/*.task
+rm -f "${TMPJOBSRUN}"/*.task
 exit $STATUS
