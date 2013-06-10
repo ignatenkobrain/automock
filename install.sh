@@ -75,6 +75,7 @@ if [[ `whoami` = root ]]; then
     userdel -r ${USER}
     rm -rf "${ROOT}"/build/
     rm -rf "${DIR}"/
+    rm -rf "${TMPJOBSRUN}"/
   fi
   exit 0
 else
