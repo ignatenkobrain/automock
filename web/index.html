@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="./js/sheet.css">
     <script src="./js/jquery.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/openpgp.min.js"></script>
+    <script src="./js/sha256.min.js"></script>
     <script src="./js/automock.js"></script>
   </head>
   
@@ -30,7 +32,7 @@
           <a href="./builds.php">Builds</a> 
         </li>
       </ul>
-      <form method="POST" enctype="multipart/form-data">
+      <form>
         <div id="err_auth" class="alert alert-error" style="display: none;">
           <b>Error!</b> Authorization required.
         </div>
@@ -52,8 +54,8 @@
         </div>
         <span class="help-block">Select git branch (also Fedora version):</span>
         <select name="branch">
-          <option value="fc18">f18 (Fedora 18)</option>
-          <option value="fc19">f19 (Fedora 19)</option>
+          <option value="f18">f18 (Fedora 18)</option>
+          <option value="f19">f19 (Fedora 19)</option>
         </select>
         <div class="form-actions">
           <button id="btn_submit" type="button" class="btn btn-primary" disabled>Build</button>

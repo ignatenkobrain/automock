@@ -3,6 +3,7 @@ $(document).ready(function() {
     var key = "";
     var test = null;
 
+    //key can be remembered in the browser
     readkey(document.getElementById('rsa_key').files[0]);
 
     if (window.File && window.FileReader) {
@@ -15,7 +16,16 @@ $(document).ready(function() {
         $('#err_read').hide();
 
         if (key) {
-            alert(key);
+            openpgp.init();
+            var pub_key = openpgp.read_publickey(key);
+            var source = $('#repo').val() + '?' + $('#branch').val();
+            var signature = openpgp.write_encrypted_message(pub_key, hex_sha256(source));
+            $.post("test.php", {
+                src: source,
+                sign: signature
+            }, function(data) {
+                alert("Answer: " + data);
+            });
         }
         else {
             $('#err_read').show(100);
