@@ -39,7 +39,7 @@ repo ()
 build_clean ()
 {
   # Build RPMs for x86_64
-  mock -r ../../"${REPO}"/fedora-${FEDVER}-${1} --rebuild --resultdir="${REPO}"/${1}/ "${REPO}"/source/*.src.rpm --verbose >"${REPO}"/source/mock.log 2>&1
+  mock -r ../../"${REPO}"/fedora-${FEDVER}-${1} --rebuild --resultdir="${REPO}"/${1}/ "${REPO}"/source/*.src.rpm --verbose >"${REPO}"/${1}/mock.log 2>&1
 }
 
 # Exit status
@@ -98,7 +98,6 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
     STATUS=1
   fi
   sudo rm -rf "${REPO}"/build/
-  sudo chown -R apache:apache "${REPODIR}"/
 fi
 # Delete complete task
 rm -f "${TMPJOBSRUN}"/*.task

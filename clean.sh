@@ -1,5 +1,5 @@
 #!/bin/bash
-source /home/repos/automock/automock.conf
+source automock.conf
 # Clean
 sudo rm -rf "${REPODIR}"/*
 # Create repodirs

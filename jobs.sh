@@ -19,7 +19,7 @@ if [[ ${MAINARCH} = x86_64 ]]; then
     # Move task in running
     mv "${NEWTASK}" "${TMPJOBSRUN}"/
     # Start build task in background
-    setsid "${AUTOMOCK}"/automock.sh "`cat "${TMPJOBSRUN}"/*.task`" &
+    setsid sudo -u ${USER} "${AUTOMOCK}"/automock.sh "`cat "${TMPJOBSRUN}"/*.task`" &
   fi
   exit 0
 else
