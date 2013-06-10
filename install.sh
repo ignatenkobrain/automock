@@ -40,11 +40,13 @@ Alias /automock ${DIR}/web
 init ()
 {
   # Clean
-  rm -rf "${REPODIR}"/*
+  rm -rf "${REPODIR}"/
   # Create repodirs
-  mkdir -m 770 -p "${REPODIR}"/packages/f{18,19}/
+  mkdir -m 770 "${REPODIR}"/
+  mkdir -m 770 "${REPODIR}"/packages/
+  mkdir -m 770 "${REPODIR}"/packages/f{18,19}/
   # Create jobs directories
-  mkdir -m 770 -p "${JOBS}"/ "${JOBS}"/pending/ "${TMPJOBSRUN}"/
+  mkdir -m 770 "${JOBS}"/ "${JOBS}"/pending/ "${TMPJOBSRUN}"/
   # Chown
   chown -R ${USER}:${GROUP} "${REPODIR}"/
 }
