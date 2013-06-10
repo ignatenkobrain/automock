@@ -11,6 +11,8 @@
 #sudo           #
 #################
 source /home/repos/automock/automock.conf
+# Hack for mock unpriveleged
+PATH="/usr/bin:${PATH}"
 update ()
 {
   # Create repodata
@@ -97,7 +99,8 @@ if [[ ${1} =~ ^git://.*\.git\?f1[89]$ ]]; then
     echo "See mock.log"
     STATUS=1
   fi
-  sudo rm -rf "${REPO}"/build/
+  # Clean orphaned files
+  sudo rm -rf "${REPO}"/build/ "${REPO}"/fedora-${FEDVER}-{i386,x86_64}.cfg
 fi
 # Delete complete task
 sudo rm -f "${TMPJOBSRUN}"/*.task
