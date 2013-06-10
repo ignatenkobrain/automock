@@ -49,21 +49,30 @@ init ()
   chown -R ${USER}:${GROUP} "${ROOT}"/
 }
 if [[ `whoami` = root ]]; then
-  # Install requirements
-  yum install -y mock-scm sudo createrepo sed gawk httpd php
-  # Make primary dir
-  mkdir "${DIR}"/
-  cp -R * "${DIR}"/
-  chown -R apache:apache "${DIR}"/
-  mkdir -m 750 "${DIR}"/backups/
-  # Create user for build
-  useradd -M -g ${GROUP} -G mock -s /bin/false ${USER}
-  sudoers
-  httpd
-  init
-  crontab -u apache cron
-  systemctl enable httpd.service
-  systemctl restart httpd.service
+  if [[ "${1}" = install ]]; then
+    # Install requirements
+    yum install -y mock-scm sudo createrepo sed gawk httpd php
+    # Make primary dir
+    mkdir "${DIR}"/
+    cp -R * "${DIR}"/
+    chown -R apache:apache "${DIR}"/
+    mkdir -m 750 "${DIR}"/backups/
+    # Create user for build
+    useradd -M -g ${GROUP} -G mock -s /bin/false ${USER}
+    sudoers
+    httpd
+    init
+    crontab -u apache cron
+    systemctl enable httpd.service
+    systemctl restart httpd.service
+  elif [[ "$1" = uninstall ]]; then
+    mv "${DIR}"/backups/welcome.conf /etc/httpd/conf.d/
+    mv "${DIR}"/backups/sudoers /etc/
+    crontab -u apache -r
+    userdel -r ${USER}
+    rm -rf "${ROOT}"/
+    rm -rf "${DIR}"/
+  fi
   exit 0
 else
   echo "Failed! Run as root!"
