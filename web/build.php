@@ -1,6 +1,8 @@
 <?php
-    $MOCKCONF = "/opt/automock/automock.conf";
-    $MOCKENC = "/opt/automock/gpg-check.sh";
+    $MOCKDIR = "/opt/automock/";
+    $MOCKCONF = $MOCKDIR . "automock.conf";
+    $MOCKENC = $MOCKDIR . "gpg-check.sh";
+    $MOCKJOB = $MOCKDIR . "jobs.sh";
 
     function get_keys() {
         global $MOCKCONF;
@@ -13,30 +15,27 @@
         }
         return $out;
     }
-    
-    system("echo lol", $var);
-    var_dump($var);
 
-    die();
-
-    //get params
     $src = $_POST['src'];
     $sign = $_POST['sign'];
+    var_dump($src);
     $hash = hash('sha256', $src);
 
-    //decrypt hash
-    $pgp = gnupg_init();
-    gnupg_adddecryptkey($pgp, $PGPKEY);
-    $origin = gnupg_decrypt($pgp, $sign);
-
-    if ($hash == $origin) {
-        //ok
-        echo 'ok';
+    $date = date("d.m.Y-H:i:s");
+    $name = explode(".", end(explode("/", $src)))[0];
+    $rand = mt_rand();
+    $file = getenv("DOCUMENT_ROOT") . "/build/jobs/pending/$date-$name.$rand.task";
+    file_put_contents($file, $src . "\n"); 
+    
+    $f = @fopen($file, 'w');
+    if (!$f) {
+        return false;
+    } else {
+        $bytes = fwrite($f, $src . "\n");
+        fclose($f);
     }
-    else {
-        http_response_code(403);
-        echo 'no access';
-        die();
-    }
+      
+    echo "created " . $file;
+    echo system("$MOCKJOB &> std");
 ?>
 
