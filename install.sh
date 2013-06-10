@@ -42,11 +42,11 @@ init ()
   # Clean
   rm -rf "${REPODIR}"/*
   # Create repodirs
-  mkdir -p "${REPODIR}"/packages/f{18,19}/
+  mkdir -m 770-p "${REPODIR}"/packages/f{18,19}/
   # Create jobs directories
-  mkdir -p "${JOBS}"/ "${JOBS}"/pending/ "${TMPJOBSRUN}"/
+  mkdir -m 770 -p "${JOBS}"/ "${JOBS}"/pending/ "${TMPJOBSRUN}"/
   # Chown
-  chown -R ${USER}:${GROUP} "${ROOT}"/
+  chown -R ${USER}:${GROUP} "${REPODIR}"/
 }
 if [[ `whoami` = root ]]; then
   if [[ "${1}" = install ]]; then
