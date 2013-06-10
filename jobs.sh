@@ -1,5 +1,5 @@
 #!/bin/bash
-source /home/repos/automock/automock.conf
+source /opt/automock/automock.conf
 verifydir ()
 {
   if [[ ! -d "${1}"/ ]]; then
