@@ -35,7 +35,7 @@ Alias /automock ${DIR}/web
   Require all granted
   Order allow,deny
   Allow from all
-</Directory>" >> /etc/httpd/conf.d/automock.conf
+</Directory>" > /etc/httpd/conf.d/automock.conf
 }
 init ()
 {
@@ -68,6 +68,7 @@ if [[ `whoami` = root ]]; then
   elif [[ "$1" = uninstall ]]; then
     mv "${DIR}"/backups/welcome.conf /etc/httpd/conf.d/
     mv "${DIR}"/backups/sudoers /etc/
+    rm -f /etc/httpd/conf.d/automock.conf
     crontab -u apache -r
     userdel -r ${USER}
     rm -rf "${ROOT}"/
