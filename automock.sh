@@ -10,7 +10,7 @@
 #awk            #
 #sudo           #
 #################
-source automock.conf
+source /home/repos/automock/automock.conf
 update ()
 {
   # Create repodata

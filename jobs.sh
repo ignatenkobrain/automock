@@ -1,5 +1,5 @@
 #!/bin/bash
-source automock.conf
+source /home/repos/automock/automock.conf
 verifydir ()
 {
   if [[ ! -d "${1}"/ ]]; then
@@ -18,8 +18,8 @@ if [[ ${MAINARCH} = x86_64 ]]; then
     fi
     # Move task in running
     mv "${NEWTASK}" "${TMPJOBSRUN}"/
-    # Start build task
-    nohup setsid "${AUTOMOCK}"/automock.sh "`cat "${TMPJOBSRUN}"/*.task`"
+    # Start build task in background
+    setsid "${AUTOMOCK}"/automock.sh "`cat "${TMPJOBSRUN}"/*.task`" &
   fi
   exit 0
 else
