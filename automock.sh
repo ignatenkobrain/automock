@@ -5,7 +5,7 @@ PATH="/usr/bin:${PATH}"
 build ()
 {
   # Build RPMs
-  mock -r ../../"${REPO}"/fedora-${FEDVER}-${1} --rebuild --resultdir="${REPO}"/${1}/ "${REPO}"/source/*.src.rpm --verbose >"${REPO}"/${1}/mock.log 2>&1
+  mock -r ../../"${REPO}"/build/fedora-${FEDVER}-${1} --rebuild --resultdir="${REPO}"/${1}/ "${REPO}"/source/*.src.rpm --verbose >"${REPO}"/${1}/mock.log 2>&1
 }
 # Exit status
 STATUS=0
@@ -24,9 +24,11 @@ TIMESTAMP=`date +"%d.%m.%Y-%H:%M:%S"`
 # Initializate REPO variable at date
 REPO="${REPODIR}"/"${TIMESTAMP}"-${REPONAME}-fc${FEDVER}
 # Touch directories
-mkdir -m 770 "${REPO}"/ "${REPO}"/source/ "${REPO}"/build/ "${REPO}"/x86_64/ "${REPO}"/i386/
+mkdir -m 770 "${REPO}"/ "${REPO}"/source/ "${REPO}"/x86_64/ "${REPO}"/i386/
+# Touch invisible directory (for httpd) with build requirements
+mkdir -m 700 "${REPO}"/build/
 # Copy original mock files
-cp /etc/mock/fedora-${FEDVER}-{i386,x86_64}.cfg "${REPO}"/
+cp /etc/mock/fedora-${FEDVER}-{i386,x86_64}.cfg "${REPO}"/build/
 # Postfix for dist
 POSTFIX="B"
 # Custom DIST
@@ -36,7 +38,7 @@ let LINE++
 # Edit mock configs
 for ARCH in {i386,x86_64}
 do
-  sed -i -e "${LINE} s/^/config_opts['macros']['%dist']='.${DIST}.${POSTFIX}'\n/" "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg
+  sed -i -e "${LINE} s/^/config_opts['macros']['%dist']='.${DIST}.${POSTFIX}'\n/" "${REPO}"/build/fedora-${FEDVER}-${ARCH}.cfg
   echo "`echo "config_opts['scm'] = False"; \
          echo "config_opts['scm_opts']['method'] = 'git'"; \
          echo "#config_opts['scm_opts']['cvs_get'] = 'cvs -d /srv/cvs co SCM_BRN SCM_PKG'"; \
@@ -50,9 +52,9 @@ do
          echo "config_opts['scm_opts']['branch'] = '${BRANCH}'"; \
          echo "config_opts['basedir']='${REPO}/build/basedir/'"; \
          echo "config_opts['cache_topdir'] = '${REPO}/build/cache/'"; \
-         cat "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg`" > "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg
+         cat "${REPO}"/fedora-${FEDVER}-${ARCH}.cfg`" > "${REPO}"/build/fedora-${FEDVER}-${ARCH}.cfg
 done
-mock -r ../../"${REPO}"/fedora-${FEDVER}-${MAINARCH} --buildsrpm --scm-enable --resultdir="${REPO}"/source/ --verbose >"${REPO}"/source/mock.log 2>&1
+mock -r ../../"${REPO}"/build/fedora-${FEDVER}-${MAINARCH} --buildsrpm --scm-enable --resultdir="${REPO}"/source/ --verbose >"${REPO}"/source/mock.log 2>&1
 if [[ $? -eq 0 ]]; then
   build "x86_64"
   build "i386"
@@ -62,7 +64,7 @@ else
   STATUS=1
 fi
 # Clean orphaned files
-sudo rm -rf "${REPO}"/build/ "${REPO}"/fedora-${FEDVER}-{i386,x86_64}.cfg
+sudo rm -rf "${REPO}"/build/
 # Delete complete task
 rm -f "${TMPJOBSRUN}"/*.task
 exit $STATUS

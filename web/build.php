@@ -1,4 +1,23 @@
 <?php
+    $MOCKCONF = "/opt/automock/automock.conf";
+    $MOCKENC = "/opt/automock/gpg-check.sh";
+
+    function get_keys() {
+        global $MOCKCONF;
+
+        $out = array();
+        exec("bash -c 'source $MOCKCONF && for key in \${KEYS[@]}; do echo \$key; done'", $keys);
+        
+        foreach ($keys as &$key) {
+            $out[] = explode(":", $key)[1];
+        }
+        return $out;
+    }
+    
+    system("echo lol", $var);
+    var_dump($var);
+
+    die();
 
     //get params
     $src = $_POST['src'];

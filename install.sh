@@ -64,6 +64,8 @@ if [[ `whoami` = root ]]; then
     sudoers
     httpd
     init
+    crontab -u apache -l > cron
+    echo "* * * * * ${DIR}/jobs.sh" >> cron
     crontab -u apache cron
     systemctl enable httpd.service
     systemctl restart httpd.service
