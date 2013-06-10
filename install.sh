@@ -14,11 +14,11 @@ sudoers ()
   echo "Defaults:${USER} !requiretty
 Defaults:apache !requiretty
 ${USER} ALL=(ALL) NOPASSWD: /usr/sbin/semanage, /usr/sbin/restorecon, /usr/sbin/setsebool, /usr/bin/rm
-apache ALL=(${USER}) NOPASSWD: ${AUTOMOCK}/automock.sh" >> /etc/sudoers
+apache ALL=(${USER}) NOPASSWD: ${DIR}/automock.sh" >> /etc/sudoers
 }
 httpd ()
 {
-  backup "/etc/httpd/conf.d/welcome.cfg"
+  backup "/etc/httpd/conf.d/welcome.conf"
   echo "DocumentRoot ${ROOT} 
 Alias /repos ${REPODIR}/packages
 <Directory "${ROOT}">
@@ -40,10 +40,9 @@ init ()
   # Chown
   chown -R ${USER}:${GROUP} "${ROOT}"/
 }
-backup
 if [[ `whoami` = root ]]; then
   # Install requirements
-  yum install -y mock-scm sudo createrepo sed awk httpd php
+  yum install -y mock-scm sudo createrepo sed gawk httpd php
   # Make primary dir
   mkdir "${DIR}" "${DIR}"/backups/
   # Create user for build
