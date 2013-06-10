@@ -50,6 +50,7 @@ if [[ `whoami` = root ]]; then
   sudoers
   httpd
   init
+  crontab -u apache cron
   exit 0
 else
   echo "Failed! Run as root!"
