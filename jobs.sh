@@ -19,7 +19,7 @@ if [[ ${MAINARCH} = x86_64 ]]; then
       exit 0
     fi
     # Move task in running
-    mv "${NEWTASK}" "${TMPJOBSRUN}"/
+    cp "${NEWTASK}" "${TMPJOBSRUN}"/
     # Start build task in background^W
     daemonize "${DIR}"/wrapper.sh
   fi

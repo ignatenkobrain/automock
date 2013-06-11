@@ -35,9 +35,11 @@ $(document).ready(function() {
             $('#err_read').show(100);
         } */
         
-        var source = $('#repo').val() + '?' + $('#branch').val();
+        var source = $('#repo').val();
+        var branch = $('#branch').val();
         $.post("build.php", {
             src: source,
+            branch: branch,
             sign: 'none'
         }, function(data) {
             alert("Answer: " + data);

@@ -9,21 +9,16 @@ build ()
 }
 # Exit status
 STATUS=0
-# Read task string to variable
-read URL < "${1}"
+# Read task
+source "${1}"
 # Cutting reponame
-REPONAME="${1##*-}"
-REPONAME="${REPONAME%%.*}"
+REPONAME="${URL##*/}"
+REPONAME="${REPONAME%.git}"
 # Git url
 GIT="${URL#git://}"
 GIT="${GIT%/*}"
-# Cutting branch ( also fedora version )
-BRANCH="${URL##*.git?}"
 # Initializate Fedora version
 FEDVER="${BRANCH:1}"
-# Initializate start time
-TIMESTAMP="${1##*/}"
-TIMESTAMP="${TIMESTAMP%-*}"
 # Initializate REPO variable at date
 REPO="${REPODIR}"/"${TIMESTAMP}"-${REPONAME}-f${FEDVER}
 # Touch directories
@@ -68,6 +63,6 @@ else
 fi
 # Clean orphaned files
 sudo rm -rf "${REPO}"/build/ "${REPO}"/conf/
-# Delete complete task
-rm -f "${1}"
+# Delete complete task files
+rm -f "${1}" "${JOBS}"/pending/"`basename ${1}`"
 exit $STATUS
