@@ -70,8 +70,4 @@ fi
 sudo rm -rf "${REPO}"/build/ "${REPO}"/conf/
 # Delete complete task
 rm -f "${1}"
-
-#sleep 3s
-#"${DIR}"/jobs.sh
-
 exit $STATUS

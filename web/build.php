@@ -34,8 +34,7 @@
         $bytes = fwrite($f, $src . "\n");
         fclose($f);
     }
-      
-    echo "created " . $file;
-    echo system("$MOCKJOB &> std");
+
+//    echo system($MOCKJOB);
 ?>
 

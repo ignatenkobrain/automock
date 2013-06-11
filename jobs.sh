@@ -1,22 +1,14 @@
 #!/bin/bash
 source /opt/automock/automock.conf
 set -x
-PATH="/sbin:/bin:/usr/sbin:/usr/bin"
+# Hack for daemonize
+PATH="${PATH}:/usr/sbin"
 verifydir ()
 {
   if [[ ! -d "${1}"/ ]]; then
     mkdir -m 770 -p "${1}"/
   fi
 }
-echo "arch: $MAINARCH"
-echo "jobdir: $JOBS"
-echo "jobtpm: $TMPJOBSRUN"
-echo -n "active:"; echo ls -A "${TMPJOBSRUN}"
-echo "maxtasks: $MAXTASKS"
-echo "path: $PATH"
-
-#: <<'END'
-
 if [[ ${MAINARCH} = x86_64 ]]; then
   verifydir "${TMPJOBSRUN}"
   verifydir "${JOBS}"
@@ -36,5 +28,3 @@ else
   echo "For build need x86_64 OS !"
   exit 1
 fi
-
-#END
