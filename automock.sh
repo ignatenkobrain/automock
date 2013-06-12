@@ -20,7 +20,7 @@ GIT="${GIT%/*}"
 # Initializate Fedora version
 FEDVER="${BRANCH:1}"
 # Initializate REPO variable at date
-REPO="${REPODIR}"/"${TIMESTAMP}"-${REPONAME}-f${FEDVER}
+REPO="${REPODIR}"/"${TIMESTAMP}"-${REPONAME}-${BRANCH}
 # Touch directories
 mkdir -m 770 "${REPO}"/ "${REPO}"/source/ "${REPO}"/x86_64/ "${REPO}"/i386/
 # Touch invisible directory (for httpd) with build requirements
