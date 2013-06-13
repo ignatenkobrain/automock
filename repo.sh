@@ -1,5 +1,5 @@
 #!/bin/bash
-source /opt/automock.conf
+source /opt/automock/automock.conf
 for REPOSITORY in "$@"
 do
   createrepo --update ${REPOSITORY}
